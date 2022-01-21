@@ -5,6 +5,14 @@ class Categorias:
         self.descricao = descricao
 
 
+class Fornecerdores:
+    def __init__(self, cnpj, nome, telefone, categoria):
+        self.cnpj = cnpj
+        self.nome = nome
+        self.telefone = telefone
+        self.categoria = categoria
+
+
 class Produtos:
     def __init__(self, id, categoria, nome, quantidade, custo, preco, descricao):
         self.id = id

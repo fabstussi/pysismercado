@@ -11,9 +11,7 @@ class CategoriasDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Categorias(linha[0],
-                               linha[1],
-                               linha[2]) for linha in linhas]
+            return [Categorias(linha[0], linha[1], linha[2]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -24,9 +22,7 @@ class CategoriasDao:
         try:
             with open('categorias.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{categoria.id}|' +
-                    f'{categoria.nome}|' +
-                    f'{categoria.descricao}\n')
+                    f'{categoria.id}|{categoria.nome}|{categoria.descricao}\n')
             return True
         except Exception:
             return False
@@ -56,11 +52,7 @@ class FornecedoresDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Fornecerdores(linha[0],
-                                  linha[1],
-                                  linha[2],
-                                  linha[3],
-                                  linha[5]) for linha in linhas]
+            return [Fornecerdores(linha[0], linha[1], linha[2], linha[3], linha[5]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -71,11 +63,7 @@ class FornecedoresDao:
         try:
             with open('fornecedores.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{fornecedor.id}|' +
-                    f'{fornecedor.cnpj}|' +
-                    f'{fornecedor.nome}|' +
-                    f'{fornecedor.telefone}|' +
-                    f'{fornecedor.categoria}\n')
+                    f'{fornecedor.id}|{fornecedor.cnpj}|{fornecedor.nome}|{fornecedor.telefone}|{fornecedor.categoria}\n')
             return True
         except Exception:
             return False
@@ -105,14 +93,7 @@ class ProdutosDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Produtos(linha[0],
-                             linha[1],
-                             linha[2],
-                             linha[3],
-                             linha[4],
-                             linha[5],
-                             linha[6],
-                             linha[7],) for linha in linhas]
+            return [Produtos(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6], linha[7],) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -123,14 +104,7 @@ class ProdutosDao:
         try:
             with open('produtos.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{produto.id}|' +
-                    f'{produto.categoria}|' +
-                    f'{produto.fornecedor}|' +
-                    f'{produto.nome}|' +
-                    f'{produto.quantidade}|' +
-                    f'{produto.custo}|' +
-                    f'{produto.preco}|' +
-                    f'{produto.descricao}\n')
+                    f'{produto.id}|{produto.categoria}|{produto.fornecedor}|{produto.nome}|{produto.quantidade}|{produto.custo}|{produto.preco}|{produto.descricao}\n')
             return True
         except Exception:
             return False
@@ -160,12 +134,7 @@ class ClientesDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Clientes(linha[0],
-                             linha[1],
-                             linha[2],
-                             linha[3],
-                             linha[4],
-                             linha[5]) for linha in linhas]
+            return [Clientes(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -176,12 +145,7 @@ class ClientesDao:
         try:
             with open('clientes.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{cliente.id}|' +
-                    f'{cliente.cpf}|' +
-                    f'{cliente.nome}|' +
-                    f'{cliente.telefone}|' +
-                    f'{cliente.sexo}|' +
-                    f'{cliente.ano_nasc}\n')
+                    f'{cliente.id}|{cliente.cpf}|{cliente.nome}|{cliente.telefone}|{cliente.sexo}|{cliente.ano_nasc}\n')
             return True
         except Exception:
             return False
@@ -190,6 +154,46 @@ class ClientesDao:
     def gera_id() -> int:
         try:
             with open('clientes.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            ultma_linha = [linhas.strip() for linhas in linhas][-1]
+            if len(ultma_linha) == 0:
+                return 1
+            return int(ultma_linha.split('|')[0]) + 1
+        except FileNotFoundError:
+            return 1
+        except Exception as e:
+            print(f'Erro: {e}')
+            return -1
+
+
+class CargosDao:
+
+    @classmethod
+    def listar(cls) -> list:
+        try:
+            with open('cargos.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
+            linhas = list(map(lambda linha: linha.split('|'), linhas))
+            return [Cargos(linha[0], linha[1], linha[2]) for linha in linhas]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            return [-1, 'ERRO', str(e)]
+
+    @classmethod
+    def salvar(cls, cargo: Cargos, modo: str) -> bool:
+        try:
+            with open('cargos.txt', modo) as arquivo:
+                arquivo.write(f'{cargo.id}|{cargo.nome}|{cargo.descricao}\n')
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def gera_id() -> int:
+        try:
+            with open('cargos.txt', 'r') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

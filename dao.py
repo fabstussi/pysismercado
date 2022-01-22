@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from model import Categorias, Fornecerdores, Produtos, Clientes, Cargos, Vendedores, Vendas
 
 
@@ -194,6 +193,88 @@ class CargosDao:
     def gera_id() -> int:
         try:
             with open('cargos.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            ultma_linha = [linhas.strip() for linhas in linhas][-1]
+            if len(ultma_linha) == 0:
+                return 1
+            return int(ultma_linha.split('|')[0]) + 1
+        except FileNotFoundError:
+            return 1
+        except Exception as e:
+            print(f'Erro: {e}')
+            return -1
+
+
+class VendedoresDao:
+
+    @classmethod
+    def listar(cls) -> list:
+        try:
+            with open('vendedores.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
+            linhas = list(map(lambda linha: linha.split('|'), linhas))
+            return [Vendedores(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6]) for linha in linhas]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            return [-1, 'ERRO', str(e)]
+
+    @classmethod
+    def salvar(cls, vendedor: Vendedores, modo: str) -> bool:
+        try:
+            with open('vendedores.txt', modo) as arquivo:
+                arquivo.write(
+                    f'{vendedor.id}|{vendedor.cpf}|{vendedor.nome}|{vendedor.telefone}|{vendedor.sexo}|{vendedor.ano_nasc}|{vendedor.cargo}\n')
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def gera_id() -> int:
+        try:
+            with open('vendedores.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            ultma_linha = [linhas.strip() for linhas in linhas][-1]
+            if len(ultma_linha) == 0:
+                return 1
+            return int(ultma_linha.split('|')[0]) + 1
+        except FileNotFoundError:
+            return 1
+        except Exception as e:
+            print(f'Erro: {e}')
+            return -1
+
+
+class VendasDao:
+
+    @classmethod
+    def listar(cls) -> list:
+        try:
+            with open('vendas.txt', 'r') as arquivo:
+                linhas = arquivo.readlines()
+            linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
+            linhas = list(map(lambda linha: linha.split('|'), linhas))
+            return [Vendas(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6], linha[7]) for linha in linhas]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            return [-1, 'ERRO', str(e)]
+
+    @classmethod
+    def salvar(cls, venda: Vendas, modo: str) -> bool:
+        try:
+            with open('vendas.txt', modo) as arquivo:
+                arquivo.write(
+                    f'{venda.cupom}|{venda.vendedor}|{venda.data}|{venda.cliente}|{venda.quantidade}|{venda.produto}|{venda.preco}|{venda.valor}\n')
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def gera_cupom() -> int:
+        try:
+            with open('vendas.txt', 'r') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

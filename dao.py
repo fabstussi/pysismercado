@@ -54,11 +54,12 @@ class FornecedoresDao:
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
             return [Fornecerdores(linha[0], linha[1], linha[2], linha[3],
-                                  linha[5]) for linha in linhas]
+                                  linha[4]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
             print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, fornecedor: Fornecerdores, modo: str) -> bool:

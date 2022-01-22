@@ -15,7 +15,8 @@ class CategoriasDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, categoria: Categorias, modo: str) -> bool:
@@ -57,7 +58,7 @@ class FornecedoresDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+print(f'ERRO: {e}')RRO', str(e)]
 
     @classmethod
     def salvar(cls, fornecedor: Fornecerdores, modo: str) -> bool:
@@ -101,7 +102,8 @@ class ProdutosDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, produto: Produtos, modo: str) -> bool:
@@ -145,7 +147,8 @@ class ClientesDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, cliente: Clientes, modo: str) -> bool:
@@ -187,7 +190,8 @@ class CargosDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, cargo: Cargos, modo: str) -> bool:
@@ -229,7 +233,8 @@ class VendedoresDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, vendedor: Vendedores, modo: str) -> bool:
@@ -273,7 +278,8 @@ class VendasDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-            return [-1, 'ERRO', str(e)]
+            print(f'ERRO: {e}')
+            return []
 
     @classmethod
     def salvar(cls, venda: Vendas, modo: str) -> bool:

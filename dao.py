@@ -10,7 +10,8 @@ class CategoriasDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Categorias(linha[0], linha[1], linha[2]) for linha in linhas]
+            return [Categorias(linha[0], linha[1], linha[2])
+                    for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -51,7 +52,8 @@ class FornecedoresDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Fornecerdores(linha[0], linha[1], linha[2], linha[3], linha[5]) for linha in linhas]
+            return [Fornecerdores(linha[0], linha[1], linha[2], linha[3],
+                                  linha[5]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -62,7 +64,8 @@ class FornecedoresDao:
         try:
             with open('fornecedores.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{fornecedor.id}|{fornecedor.cnpj}|{fornecedor.nome}|{fornecedor.telefone}|{fornecedor.categoria}\n')
+                    f'{fornecedor.id}|{fornecedor.cnpj}|{fornecedor.nome}|' +
+                    f'{fornecedor.telefone}|{fornecedor.categoria}\n')
             return True
         except Exception:
             return False
@@ -92,7 +95,9 @@ class ProdutosDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Produtos(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6], linha[7],) for linha in linhas]
+            return [Produtos(linha[0], linha[1], linha[2], linha[3], linha[4],
+                             linha[5], linha[6],
+                             linha[7],) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -103,7 +108,9 @@ class ProdutosDao:
         try:
             with open('produtos.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{produto.id}|{produto.categoria}|{produto.fornecedor}|{produto.nome}|{produto.quantidade}|{produto.custo}|{produto.preco}|{produto.descricao}\n')
+                    f'{produto.id}|{produto.categoria}|{produto.fornecedor}' +
+                    f'|{produto.nome}|{produto.quantidade}|{produto.custo}|' +
+                    f'{produto.preco}|{produto.descricao}\n')
             return True
         except Exception:
             return False
@@ -133,7 +140,8 @@ class ClientesDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Clientes(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5]) for linha in linhas]
+            return [Clientes(linha[0], linha[1], linha[2], linha[3], linha[4],
+                             linha[5]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -144,7 +152,8 @@ class ClientesDao:
         try:
             with open('clientes.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{cliente.id}|{cliente.cpf}|{cliente.nome}|{cliente.telefone}|{cliente.sexo}|{cliente.ano_nasc}\n')
+                    f'{cliente.id}|{cliente.cpf}|{cliente.nome}|' +
+                    f'{cliente.telefone}|{cliente.sexo}|{cliente.ano_nasc}\n')
             return True
         except Exception:
             return False
@@ -214,7 +223,9 @@ class VendedoresDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Vendedores(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6]) for linha in linhas]
+            return [Vendedores(linha[0], linha[1], linha[2], linha[3],
+                               linha[4], linha[5],
+                               linha[6]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -225,7 +236,9 @@ class VendedoresDao:
         try:
             with open('vendedores.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{vendedor.id}|{vendedor.cpf}|{vendedor.nome}|{vendedor.telefone}|{vendedor.sexo}|{vendedor.ano_nasc}|{vendedor.cargo}\n')
+                    f'{vendedor.id}|{vendedor.cpf}|{vendedor.nome}|' +
+                    f'{vendedor.telefone}|{vendedor.sexo}|' +
+                    f'{vendedor.ano_nasc}|{vendedor.cargo}\n')
             return True
         except Exception:
             return False
@@ -255,7 +268,8 @@ class VendasDao:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Vendas(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6], linha[7]) for linha in linhas]
+            return [Vendas(linha[0], linha[1], linha[2], linha[3], linha[4],
+                           linha[5], linha[6], linha[7]) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -266,7 +280,9 @@ class VendasDao:
         try:
             with open('vendas.txt', modo) as arquivo:
                 arquivo.write(
-                    f'{venda.cupom}|{venda.vendedor}|{venda.data}|{venda.cliente}|{venda.quantidade}|{venda.produto}|{venda.preco}|{venda.valor}\n')
+                    f'{venda.cupom}|{venda.vendedor}|{venda.data}|' +
+                    f'{venda.cliente}|{venda.quantidade}|{venda.produto}|' +
+                    f'{venda.preco}|{venda.valor}\n')
             return True
         except Exception:
             return False

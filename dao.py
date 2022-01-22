@@ -58,7 +58,7 @@ class FornecedoresDao:
         except FileNotFoundError:
             return []
         except Exception as e:
-print(f'ERRO: {e}')RRO', str(e)]
+            print(f'ERRO: {e}')
 
     @classmethod
     def salvar(cls, fornecedor: Fornecerdores, modo: str) -> bool:

@@ -54,7 +54,7 @@ class CatagoriasController:
             listas = cls.buscar()
             for i, categoria in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if categoria.id != id:
+                if int(categoria.id) != id:
                     categorias.salvar(categoria, modo)
                 else:
                     categorias.salvar(Categorias(id, novo_nome,
@@ -71,7 +71,7 @@ class CatagoriasController:
             listas = cls.buscar()
             for i, categoria in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if categoria.id != id:
+                if int(categoria.id) != id:
                     categorias.salvar(categoria, modo)
             return True
         else:
@@ -125,7 +125,7 @@ class FornecedoresController:
             listas = cls.buscar()
             for i, fornecedor in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if fornecedor.id != id:
+                if int(fornecedor.id) != id:
                     fornecedores.salvar(fornecedor, modo)
                 else:
                     fornecedores.salvar(Fornecerdores(id, novo_cnpj,
@@ -143,7 +143,7 @@ class FornecedoresController:
             listas = cls.buscar()
             for i, fornecedor in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if fornecedor.id != id:
+                if int(fornecedor.id) != id:
                     fornecedores.salvar(fornecedor, modo)
             return True
         else:
@@ -173,9 +173,9 @@ class ProdutosController:
             return produtos.listar()
 
     @classmethod
-    def cadastrar(cls, nome: str, descricao: str,
-                  categoria: str, fornecedor: str, quantidade: int,
-                  preco: float) -> bool:
+    def cadastrar(cls, categoria: str, fornecedor: str, nome: str,
+                  quantidade: int, custo: float, preco: float, descricao: str
+                  ) -> bool:
         produtos = ProdutosDao()
         listas = cls.buscar(nome=nome)
         if len(listas) > 0:
@@ -184,27 +184,28 @@ class ProdutosController:
             id = produtos.gera_id()
             if id == -1:
                 return False
-            resposta = produtos.salvar(Produtos(id, nome, descricao,
-                                                categoria, fornecedor,
-                                                quantidade, preco), 'a')
+            resposta = produtos.salvar(Produtos(id, categoria, fornecedor,
+                                                nome, quantidade, custo,
+                                                preco, descricao), 'a')
             return resposta
 
     @classmethod
-    def editar(cls, id: int, novo_nome: str, descricao: str,
-               nova_categoria: str, novo_fornecedor: str, nova_quantidade: int,
-               novo_preco: float) -> bool:
+    def editar(cls, id, nova_categoria: str, novo_fornecedor: str,
+               novo_nome: str, nova_quantidade: int, novo_custo: float,
+               novo_preço: float, nova_descricao: str) -> bool:
         produtos = ProdutosDao()
         listas = cls.buscar(id=id)
         if len(listas) > 0:
             listas = cls.buscar()
             for i, produto in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if produto.id != id:
+                if int(produto.id) != id:
                     produtos.salvar(produto, modo)
                 else:
-                    produtos.salvar(Produtos(id, novo_nome, descricao,
-                                             nova_categoria, novo_fornecedor,
-                                             nova_quantidade, novo_preco), modo)
+                    produtos.salvar(Produtos(id, nova_categoria,
+                                             novo_fornecedor, novo_nome,
+                                             nova_quantidade, novo_custo,
+                                             novo_preço, nova_descricao), modo)
             return True
         else:
             return False
@@ -217,8 +218,11 @@ class ProdutosController:
             listas = cls.buscar()
             for i, produto in enumerate(listas):
                 modo = 'w' if i == 0 else 'a'
-                if produto.id != id:
+                if int(produto.id) != id:
                     produtos.salvar(produto, modo)
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':

@@ -225,5 +225,76 @@ class ProdutosController:
             return False
 
 
+class ClientesController:
+
+    @classmethod
+    def buscar(cls, id=None, nome=None) -> list:
+        clientes = ClientesDao()
+        if id is not None:
+            listas = list(filter(lambda x: int(x.id) == id,
+                                 clientes.listar()))
+            if len(listas) > 0:
+                return listas
+            else:
+                return []
+        elif nome is not None:
+            listas = list(filter(lambda x: x.nome ==
+                          nome, clientes.listar()))
+            if len(listas) > 0:
+                return listas
+            else:
+                return []
+        else:
+            return clientes.listar()
+
+    @classmethod
+    def cadastrar(cls, cpf: str, nome: str, telefone: str, sexo: str, ano_nasc
+                  ) -> bool:
+        clientes = ClientesDao()
+        listas = cls.buscar(nome=nome)
+        if len(listas) > 0:
+            return False
+        else:
+            id = clientes.gera_id()
+            if id == -1:
+                return False
+            resposta = clientes.salvar(
+                Clientes(id, cpf, nome, telefone, sexo, ano_nasc), 'a')
+            return resposta
+
+    @classmethod
+    def editar(cls, id: int, novo_cpf: str, novo_nome: str, novo_telefone: str,
+               novo_sexo: str, novo_ano) -> bool:
+        clientes = ClientesDao()
+        listas = cls.buscar(id=id)
+        if len(listas) > 0:
+            listas = cls.buscar()
+            for i, cliente in enumerate(listas):
+                modo = 'w' if i == 0 else 'a'
+                if int(cliente.id) != id:
+                    clientes.salvar(cliente, modo)
+                else:
+                    clientes.salvar(
+                        Clientes(id, novo_cpf, novo_nome, novo_telefone,
+                                 novo_sexo, novo_ano), modo)
+            return True
+        else:
+            return False
+
+    @classmethod
+    def excluir(cls, id: int) -> bool:
+        clientes = ClientesDao()
+        listas = cls.buscar(id=id)
+        if len(listas) > 0:
+            listas = cls.buscar()
+            for i, cliente in enumerate(listas):
+                modo = 'w' if i == 0 else 'a'
+                if int(cliente.id) != id:
+                    clientes.salvar(cliente, modo)
+            return True
+        else:
+            return False
+
+
 if __name__ == '__main__':
     pass

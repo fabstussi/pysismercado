@@ -44,17 +44,17 @@ class Cargos:
         self.descricao = descricao
 
 
-class Vendedores(Clientes):
+class Funcionarios(Clientes):
     def __init__(self, id, cpf, nome, telefone, sexo, ano_nasc, cargo):
         super().__init__(id, cpf, nome, telefone, sexo, ano_nasc)
         self.cargo = cargo
 
 
 class Vendas:
-    def __init__(self, cupom, vendedor, data, cliente, quantidade, produto,
+    def __init__(self, cupom, funcionario, data, cliente, quantidade, produto,
                  preco, valor):
         self.cupom = cupom
-        self.vendedor = vendedor
+        self.funcionario = funcionario
         self.data = data
         self.cliente = cliente
         self.quantidade = quantidade

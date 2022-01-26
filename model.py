@@ -64,14 +64,12 @@ class Funcionarios(Clientes):
 
 class Vendas:
 
-    def __init__(self, cupom, funcionario, data, cliente, quantidade, produto,
-                 preco, valor, visivel=True):
+    def __init__(self, cupom, funcionario, data, cliente, compra, valor,
+                 visivel=True):
         self.cupom = cupom
         self.funcionario = funcionario
         self.data = data
         self.cliente = cliente
-        self.quantidade = quantidade
-        self.produto = produto
-        self.preco = preco
+        self.compra = compra
         self.valor = valor
         self.visivel = visivel

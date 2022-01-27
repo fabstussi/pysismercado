@@ -1,5 +1,5 @@
 from configparser import InterpolationMissingOptionError
-from cargos import Cargo
+from categorias import Categorias
 from fornecedores import Fornecerdores
 from produtos import Produtos
 from pessoas import Clientes, Funcionarios

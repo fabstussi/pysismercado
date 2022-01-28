@@ -1,4 +1,8 @@
 from models.categorias import Categorias
+from locale import setlocale, LC_ALL
+
+
+setlocale(LC_ALL, 'pt_BR.UTF-8')
 
 
 class CategoriasDal:
@@ -10,7 +14,6 @@ class CategoriasDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            linhas = list(filter(lambda linha: int(linha[-1]) == 1, linhas))
             return [Categorias(linha[0], linha[1], linha[2], int(linha[3]))
                     for linha in linhas]
         except FileNotFoundError:

@@ -81,7 +81,7 @@ class CategoriasController:
         return cls.alterar(id, categoria[0].nome, categoria[0].descricao, 0)
 
     @classmethod
-    def desapagar(cls) -> str:
+    def recuperar_apagadas(cls) -> str:
         categorias = cls.buscar(invisiveis=True)
         categorias = list(filter(lambda c: c.visivel == 0, categorias))
         lista_ids = [c.id for c in categorias]

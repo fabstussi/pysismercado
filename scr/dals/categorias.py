@@ -1,5 +1,4 @@
 from models.categorias import Categorias
-from locale import setlocale, LC_ALL
 
 
 class CategoriasDal:

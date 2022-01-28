@@ -2,9 +2,6 @@ from models.categorias import Categorias
 from locale import setlocale, LC_ALL
 
 
-setlocale(LC_ALL, 'pt_BR.UTF-8')
-
-
 class CategoriasDal:
 
     @classmethod

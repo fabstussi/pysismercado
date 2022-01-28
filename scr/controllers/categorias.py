@@ -1,5 +1,5 @@
-from scr.models.categorias import Categorias
-from scr.dals.categorias import CategoriasDal
+from models.categorias import Categorias
+from dals.categorias import CategoriasDal
 
 
 class CategoriasController:

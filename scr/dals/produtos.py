@@ -10,10 +10,9 @@ class ProdutosDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            linhas = list(filter(lambda linha: int(linha[-1]) == 1, linhas))
-            return [Produtos(linha[0], linha[1], linha[2], linha[3], linha[4],
-                             linha[5], linha[6], linha[7], int(linha[8])
-                             ) for linha in linhas]
+            return [Produtos(int(linha[0]), linha[1], linha[2], linha[3],
+                             linha[4], linha[5], linha[6], linha[7],
+                             int(linha[8])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:

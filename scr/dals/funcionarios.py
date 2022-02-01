@@ -10,8 +10,7 @@ class FuncionariosDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            linhas = list(filter(lambda linha: int(linha[-1]) == 1, linhas))
-            return [Funcionarios(linha[0], linha[1], linha[2], linha[3],
+            return [Funcionarios(int(linha[0]), linha[1], linha[2], linha[3],
                                  linha[4], linha[5], linha[6], int(linha[7])
                                  ) for linha in linhas]
         except FileNotFoundError:

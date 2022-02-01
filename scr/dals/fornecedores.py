@@ -10,8 +10,7 @@ class FornecedoresDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            linhas = list(filter(lambda linha: int(linha[-1]) == 1, linhas))
-            return [Fornecerdores(linha[0], linha[1], linha[2], linha[3],
+            return [Fornecerdores(int(linha[0]), linha[1], linha[2], linha[3],
                                   linha[4], int(linha[5])
                                   ) for linha in linhas]
         except FileNotFoundError:

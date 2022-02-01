@@ -6,7 +6,7 @@ class CargosDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('pydb/cargos.txt', 'r') as arquivo:
+            with open('db/cargos.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -21,7 +21,7 @@ class CargosDal:
     @classmethod
     def salvar(cls, cargo: Cargos, modo: str) -> bool:
         try:
-            with open('pydb/cargos.txt', modo) as arquivo:
+            with open('db/cargos.dbpy', modo) as arquivo:
                 arquivo.write(f'{cargo.id}|{cargo.nome}|{cargo.descricao}|' +
                               f'{cargo.visivel}\n')
             return True
@@ -31,7 +31,7 @@ class CargosDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('pydb/cargos.txt', 'r') as arquivo:
+            with open('db/cargos.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

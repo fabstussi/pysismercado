@@ -1,7 +1,7 @@
 class Cargos:
 
-    def __init__(self, id, nome, descricao, visivel=True):
+    def __init__(self, id, nome, privilegio, visivel=True):
         self.id = id
         self.nome = nome
-        self.descricao = descricao
+        self.privilegio = privilegio
         self.visivel = visivel

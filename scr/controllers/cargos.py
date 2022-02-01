@@ -5,9 +5,9 @@ from dals.cargos import CargosDal
 class CargosController:
 
     @staticmethod
-    def valida_entrada_dados(nome: str, descricao: str) -> bool:
+    def valida_entrada_dados(nome: str, privilegio: str) -> bool:
         if (nome == '' or len(nome) <= 3) or \
-                (descricao == '' or len(descricao) <= 10):
+                (privilegio == '' or len(privilegio) <= 10):
             return False
         return True
 
@@ -31,11 +31,16 @@ class CargosController:
         return listas
 
     @classmethod
-    def cadastrar(cls, nome, descricao, visivel=1) -> str:
-        if not cls.valida_entrada_dados(nome, descricao):
+    def autorizacao(cls, id: int, privilegio_necessario: str) -> bool:
+        cargo = cls.buscar(id=id)
+        return cargo[0].privilegio == privilegio_necessario
+
+    @classmethod
+    def cadastrar(cls, nome, privilegio, visivel=1) -> str:
+        if not cls.valida_entrada_dados(nome, privilegio):
             return 'Dados inválidos'
         id = CargosDal.gera_id()
-        cargo = Cargos(id, nome, descricao, visivel)
+        cargo = Cargos(id, nome, privilegio, visivel)
         if len(cls.buscar(nome=nome)) > 0:
             return 'cargo já cadastrado'
         elif CargosDal.salvar(cargo, 'a'):
@@ -44,9 +49,9 @@ class CargosController:
             return 'Erro não foi possível realizar o cadastro'
 
     @classmethod
-    def alterar(cls, id: int, novo_nome: str, nova_descricao: str, visivel=1,
+    def alterar(cls, id: int, novo_nome: str, novo_privilegio: str, visivel=1,
                 tudo=False) -> str:
-        if not cls.valida_entrada_dados(novo_nome, nova_descricao):
+        if not cls.valida_entrada_dados(novo_nome, novo_privilegio):
             return 'Dados inválidos'
         cargo = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(cargo) > 0 and cargo[0].id != id:
@@ -56,8 +61,8 @@ class CargosController:
             return 'cargo não encontrado'
         cargo[0].nome = novo_nome if novo_nome != cargo[0].nome else \
             cargo[0].nome
-        cargo[0].descricao = nova_descricao if nova_descricao != \
-            cargo[0].descricao else cargo[0].descricao
+        cargo[0].privilegio = novo_privilegio if novo_privilegio != \
+            cargo[0].privilegio else cargo[0].privilegio
         cargo[0].visivel = visivel
         for i, cat in enumerate(cls.buscar(invisiveis=True)):
             modo = 'w' if i == 0 else 'a'
@@ -78,7 +83,7 @@ class CargosController:
         cargo = cls.buscar(id=id)
         if len(cargo) == 0:
             return 'cargo não encontrado'
-        return cls.alterar(id, cargo[0].nome, cargo[0].descricao, 0)
+        return cls.alterar(id, cargo[0].nome, cargo[0].privilegio, 0)
 
     @classmethod
     def recuperar_apagados(cls) -> str:
@@ -98,7 +103,7 @@ class CargosController:
                 print('Opção inválida\n================')
         cargo = cls.buscar(id=id, invisiveis=True)
         return cls.alterar(id, cargo[0].nome,
-                           cargo[0].descricao, 1, tudo=True)
+                           cargo[0].privilegio, 1, tudo=True)
 
 
 if __name__ == '__main__':

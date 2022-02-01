@@ -22,7 +22,7 @@ class CargosDal:
     def salvar(cls, cargo: Cargos, modo: str) -> bool:
         try:
             with open('db/cargos.dbpy', modo) as arquivo:
-                arquivo.write(f'{cargo.id}|{cargo.nome}|{cargo.descricao}|' +
+                arquivo.write(f'{cargo.id}|{cargo.nome}|{cargo.privilegio}|' +
                               f'{cargo.visivel}\n')
             return True
         except Exception:

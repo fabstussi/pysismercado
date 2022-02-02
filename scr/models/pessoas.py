@@ -1,6 +1,6 @@
 class Clientes:
 
-    def __init__(self, id, cpf, nome, telefone, sexo, ano_nasc, visivel=True):
+    def __init__(self, id, cpf, nome, telefone, sexo, ano_nasc, visivel=1):
         self.id = id
         self.cpf = cpf
         self.nome = nome
@@ -13,6 +13,6 @@ class Clientes:
 class Funcionarios(Clientes):
 
     def __init__(self, id, cpf, nome, telefone, sexo, ano_nasc, cargo,
-                 visivel=True):
+                 visivel=1):
         super().__init__(id, cpf, nome, telefone, sexo, ano_nasc, visivel)
         self.cargo = cargo

@@ -1,5 +1,4 @@
 from random import randint
-from time import sleep
 
 
 def gerar_cpf(mascara=False) -> str:

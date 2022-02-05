@@ -1,4 +1,5 @@
 from random import randint
+from re import fullmatch
 
 
 def gerar_cpf(mascara=False) -> str:
@@ -36,16 +37,12 @@ def gerar_telefone(celular=False, ddd=False, mascara=False) -> str:
 
 
 def validar_cpf(cpf: str) -> bool:
-    if len(cpf) != 14:
-        if len(cpf) != 11:
-            return False
-        else:
-            if not cpf.isdigit():
-                return False
-    else:
-        cpf = cpf.replace('.', '').replace('-', '')
-        if not cpf.isdigit():
-            return False
+    if not fullmatch(r'[0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2}', cpf) \
+            and not fullmatch(r'[0-9]{11}', cpf):
+        return False
+    cpf = cpf.replace('.', '').replace('-', '')
+    if not cpf.isdigit():
+        return False
     soma = (sum([int(cpf[10 - i]) * (i)
                  for i in range(10, 1, -1)]) * 10) % 11
     if soma == 10:
@@ -59,4 +56,30 @@ def validar_cpf(cpf: str) -> bool:
             return False
     else:
         return False
+    return True
+
+
+def validar_telefone(telefone: str) -> bool:
+    telefone = telefone.replace('(', '')\
+        .replace(')', '').replace('-', '').replace(' ', '')
+    if len(telefone) < 8 or len(telefone) > 11:
+        return False
+    if len(telefone) == 8:
+        if not telefone.isdigit():
+            return False
+    elif len(telefone) == 9:
+        if not telefone.isdigit():
+            return False
+        if telefone[0] != '9':
+            return False
+    elif len(telefone) == 10:
+        if not telefone.isdigit():
+            return False
+        if telefone[0] == '0':
+            return False
+    elif len(telefone) == 11:
+        if not telefone.isdigit():
+            return False
+        if telefone[2] != '9' or telefone[0] == '0':
+            return False
     return True

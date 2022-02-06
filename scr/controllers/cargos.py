@@ -1,5 +1,7 @@
 from models.cargos import Cargos
 from dals.cargos import CargosDal
+from util.PyNumBR import ler_inteiro
+import util.PyUtilTerminal as put
 
 
 class CargosController:
@@ -93,10 +95,11 @@ class CargosController:
         if len(cargos) == 0:
             return 'Não há cargos excluídos'
         while True:
-            print('cargos excluídos:')
+            put.titulo('cargos excluídos:')
             for cargo in cargos:
                 print(f'ID: {cargo.id} - cargo: {cargo.nome}')
-            id = int(input('Digite o ID da cargo que deseja restaurar: '))
+            put.desenha_linha('=', 30)
+            id = ler_inteiro('Digite o ID da cargo a ser restaurado: ')
             if id in lista_ids:
                 break
             else:
@@ -104,7 +107,3 @@ class CargosController:
         cargo = cls.buscar(id=id, invisiveis=True)
         return cls.alterar(id, cargo[0].nome,
                            cargo[0].privilegio, 1, tudo=True)
-
-
-if __name__ == '__main__':
-    pass

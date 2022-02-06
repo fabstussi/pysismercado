@@ -2,7 +2,7 @@ from models.pessoas import Clientes
 from dals.clientes import ClientesDal
 from re import fullmatch
 from datetime import datetime
-import util.PyNumBR as pnbr
+from util.PyNumBR import ler_inteiro
 import util.PyUtilTerminal as put
 
 
@@ -141,7 +141,7 @@ class ClientesController:
                            cliente[0].ano_nasc, 0)
 
     @classmethod
-    def desapagar(cls) -> str:
+    def recuperar_apagadas(cls) -> str:
         Clientes = cls.buscar(invisiveis=True)
         Clientes = list(filter(lambda c: c.visivel == 0, Clientes))
         lista_ids = [c.id for c in Clientes]
@@ -152,7 +152,7 @@ class ClientesController:
             for cliente in Clientes:
                 print(f'ID: {cliente.id} - cliente: {cliente.nome}')
             put.desenha_linha('=', 30)
-            id = pnbr.ler_inteiro('Digite o ID da cliente a ser restaurado: ')
+            id = ler_inteiro('Digite o ID da cliente a ser restaurado: ')
             if id in lista_ids:
                 break
             else:

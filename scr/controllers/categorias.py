@@ -1,5 +1,7 @@
 from models.categorias import Categorias
 from dals.categorias import CategoriasDal
+import util.PyUtilTerminal as put
+import util.PyNumBR as pnbr
 
 
 class CategoriasController:
@@ -88,10 +90,12 @@ class CategoriasController:
         if len(categorias) == 0:
             return 'Não há categorias excluídas'
         while True:
-            print('Categorias excluídas:')
+            put.titulo('Categorias excluídas:')
             for categoria in categorias:
                 print(f'ID: {categoria.id} - Categoria: {categoria.nome}')
-            id = int(input('Digite o ID da categoria que deseja restaurar: '))
+            put.desenha_linha('=', 30)
+            id = pnbr.ler_inteiro('Digite o ID da categoria a ser restaurada: '
+                                  )
             if id in lista_ids:
                 break
             else:
@@ -99,7 +103,3 @@ class CategoriasController:
         categoria = cls.buscar(id=id, invisiveis=True)
         return cls.alterar(id, categoria[0].nome,
                            categoria[0].descricao, 1, tudo=True)
-
-
-if __name__ == '__main__':
-    pass

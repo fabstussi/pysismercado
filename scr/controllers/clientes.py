@@ -106,16 +106,11 @@ class ClientesController:
         cliente = cls.buscar(id=id, invisiveis=tudo)
         if len(cliente) == 0:
             return 'cliente não encontrado'
-        cliente[0].cpf = novo_cpf if novo_cpf != cliente[0].cpf else \
-            cliente[0].cpf
-        cliente[0].nome = novo_nome if novo_nome != cliente[0].nome else \
-            cliente[0].nome
-        cliente[0].telefone = novo_telefone if novo_telefone != \
-            cliente[0].telefone else cliente[0].telefone
-        cliente[0].sexo = novo_sexo if novo_sexo != cliente[0].sexo else \
-            cliente[0].sexo
-        cliente[0].ano_nasc = novo_nasc if novo_nasc != cliente[0].ano_nasc \
-            else cliente[0].ano_nasc
+        cliente[0].cpf = novo_cpf
+        cliente[0].nome = novo_nome
+        cliente[0].telefone = novo_telefone
+        cliente[0].sexo = novo_sexo
+        cliente[0].ano_nasc = novo_nasc
         cliente[0].visivel = visivel
         for i, clie in enumerate(cls.buscar(invisiveis=True)):
             modo = 'w' if i == 0 else 'a'

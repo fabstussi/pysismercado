@@ -1,7 +1,7 @@
 from models.categorias import Categorias
 from dals.categorias import CategoriasDal
 import util.PyUtilTerminal as put
-import util.PyNumBR as pnbr
+from util.PyNumBR import ler_inteiro
 
 
 class CategoriasController:
@@ -94,8 +94,7 @@ class CategoriasController:
             for categoria in categorias:
                 print(f'ID: {categoria.id} - Categoria: {categoria.nome}')
             put.desenha_linha('=', 30)
-            id = pnbr.ler_inteiro('Digite o ID da categoria a ser restaurada: '
-                                  )
+            id = ler_inteiro('Digite o ID da categoria a ser restaurada: ')
             if id in lista_ids:
                 break
             else:

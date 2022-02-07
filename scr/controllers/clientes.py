@@ -117,7 +117,7 @@ class ClientesController:
             if cliente[0].id != clie.id:
                 ClientesDal.salvar(clie, modo)
             else:
-                if input(f'Confirme a alteração do cargo {clie.nome} ' +
+                if input(f'Confirme a alteração do cliente {clie.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     ClientesDal.salvar(cliente[0], modo)
                     retorno = f'Cliente {novo_nome} alterado com sucesso!'
@@ -147,7 +147,7 @@ class ClientesController:
             for cliente in Clientes:
                 print(f'ID: {cliente.id} - cliente: {cliente.nome}')
             put.desenha_linha('=', 30)
-            id = ler_inteiro('Digite o ID da cliente a ser restaurado: ')
+            id = ler_inteiro('Digite o ID do cliente a ser restaurado: ')
             if id in lista_ids:
                 break
             else:

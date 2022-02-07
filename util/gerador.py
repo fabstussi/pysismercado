@@ -103,9 +103,9 @@ def validar_cnpj(cnpj: str) -> bool:
         return False
     if len(cnpj) != 14:
         return False
-    soma = 0
     for i in range(2):
         peso = 6 + i
+        soma = 0
         for n in cnpj[:12 + i]:
             peso -= 1
             soma += int(n) * peso
@@ -114,5 +114,4 @@ def validar_cnpj(cnpj: str) -> bool:
         digito = (11 - soma % 11 if soma % 11 > 1 else 0)
         if digito != int(cnpj[12 + i]):
             return False
-        soma = 0
     return True

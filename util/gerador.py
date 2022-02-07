@@ -17,9 +17,9 @@ def gerar_cpf(mascara=False) -> str:
 def gerar_cnpj(mascara=False) -> str:
     cnpj = ''.join([str(randint(0, 9)) for i in range(8)])
     cnpj += '0001'
-    soma = 0
     for i in range(2):
         peso = 6 + i
+        soma = 0
         for n in cnpj:
             peso -= 1
             soma += int(n) * peso
@@ -27,7 +27,6 @@ def gerar_cnpj(mascara=False) -> str:
                 peso = 10
         digito = (11 - soma % 11 if soma % 11 > 1 else 0)
         cnpj += str(digito)
-        soma = 0
     if mascara:
         return f'{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}'
     return cnpj

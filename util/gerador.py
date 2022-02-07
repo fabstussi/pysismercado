@@ -62,19 +62,13 @@ def validar_cpf(cpf: str) -> bool:
     cpf = cpf.replace('.', '').replace('-', '')
     if not cpf.isdigit():
         return False
-    soma = (sum([int(cpf[10 - i]) * (i)
-                 for i in range(10, 1, -1)]) * 10) % 11
-    if soma == 10:
-        soma = 0
-    if soma == int(cpf[9]):
-        soma = (sum([int(cpf[11 - i]) * (i)
-                for i in range(11, 1, -1)]) * 10) % 11
-        if soma == 10:
-            soma = 0
-        if soma != int(cpf[10]):
+    for i in range(2):
+        peso = 10 + i
+        soma = (sum([int(n) * (peso - cpf.index(n))for n in cpf[:9 + i]]) * 10
+                ) % 11
+        soma = 0 if soma == 10 else soma
+        if soma != int(cpf[9 + i]):
             return False
-    else:
-        return False
     return True
 
 

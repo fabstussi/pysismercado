@@ -18,6 +18,25 @@ def gerar_cpf(mascara=False) -> str:
     return cpf
 
 
+def gerar_cnpj(mascara=False) -> str:
+    cnpj = ''.join([str(randint(0, 9)) for i in range(8)])
+    cnpj += '0001'
+    soma = 0
+    for i in range(2):
+        peso = 6 + i
+        for n in cnpj:
+            peso -= 1
+            soma += int(n) * peso
+            if peso == 2:
+                peso = 10
+        digito = (11 - soma % 11 if soma % 11 > 1 else 0)
+        cnpj += str(digito)
+        soma = 0
+    if mascara:
+        return f'{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}'
+    return cnpj
+
+
 def gerar_telefone(celular=False, ddd=False, mascara=False) -> str:
     telefone = ''.join([str(randint(0, 9)) for i in range(8)])
     if celular:
@@ -82,4 +101,25 @@ def validar_telefone(telefone: str) -> bool:
             return False
         if telefone[2] != '9' or telefone[0] == '0':
             return False
+    return True
+
+
+def validar_cnpj(cnpj: str) -> bool:
+    cnpj = cnpj.replace('.', '').replace('/', '').replace('-', '')
+    if not cnpj.isdigit():
+        return False
+    if len(cnpj) != 14:
+        return False
+    soma = 0
+    for i in range(2):
+        peso = 6 + i
+        for n in cnpj[:12 + i]:
+            peso -= 1
+            soma += int(n) * peso
+            if peso == 2:
+                peso = 10
+        digito = (11 - soma % 11 if soma % 11 > 1 else 0)
+        if digito != int(cnpj[12 + i]):
+            return False
+        soma = 0
     return True

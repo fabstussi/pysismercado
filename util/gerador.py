@@ -4,15 +4,11 @@ from re import fullmatch
 
 def gerar_cpf(mascara=False) -> str:
     cpf = ''.join([str(randint(0, 9)) for i in range(9)])
-    soma = (sum([int(cpf[10 - i]) * (i) for i in range(10, 1, - 1)]) * 10) % 11
-    if soma == 10:
-        soma = 0
-    cpf += str(soma)
-    soma = (sum([int(cpf[11 - i]) * (i)
-            for i in range(11, 1, -1)]) * 10) % 11
-    if soma == 10:
-        soma = 0
-    cpf += str(soma)
+    for i in range(2):
+        peso = 10 + i
+        soma = (sum([int(n) * (peso - cpf.index(n)) for n in cpf[:9 + i]]) * 10
+                ) % 11
+        cpf += '0' if soma == 10 else str(soma)
     if mascara:
         return f'{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}'
     return cpf

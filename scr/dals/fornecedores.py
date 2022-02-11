@@ -1,4 +1,4 @@
-from models.fornecedores import Fornecerdores
+from models.fornecedores import Fornecedores
 
 
 class FornecedoresDal:
@@ -10,9 +10,9 @@ class FornecedoresDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Fornecerdores(int(linha[0]), linha[1], linha[2], linha[3],
-                                  linha[4], int(linha[5])
-                                  ) for linha in linhas]
+            return [Fornecedores(int(linha[0]), linha[1], linha[2], linha[3],
+                                 linha[4], int(linha[5])
+                                 ) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -20,7 +20,7 @@ class FornecedoresDal:
             return []
 
     @classmethod
-    def salvar(cls, fornecedor: Fornecerdores, modo: str) -> bool:
+    def salvar(cls, fornecedor: Fornecedores, modo: str) -> bool:
         try:
             with open('db/fornecedores.dbpy', modo) as arquivo:
                 arquivo.write(

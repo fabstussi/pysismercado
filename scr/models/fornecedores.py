@@ -1,4 +1,4 @@
-class Fornecerdores:
+class Fornecedores:
 
     def __init__(self, id, cnpj, nome, telefone, categoria, visivel=1):
         self.id = id

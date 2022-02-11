@@ -94,8 +94,8 @@ def validar_telefone(telefone: str) -> bool:
 
 
 def validar_cnpj(cnpj: str) -> bool:
-    if not fullmatch(r'[0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[/]?[0-9]{4}[-]?[0-9]\
-                     {2}', cnpj) and not fullmatch(r'[0-9]{11}', cnpj):
+    if not fullmatch(r'[0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[/]?[0-9]{4}[-]?[0-9]{2}',
+                     cnpj) and not fullmatch(r'[0-9]{11}', cnpj):
         return False
     cnpj = cnpj.replace('.', '').replace('/', '').replace('-', '')
     if not cnpj.isdigit():
@@ -114,3 +114,8 @@ def validar_cnpj(cnpj: str) -> bool:
         if digito != int(cnpj[12 + i]):
             return False
     return True
+
+
+teste = gerar_cnpj()
+print(teste)
+print(validar_cnpj(teste))

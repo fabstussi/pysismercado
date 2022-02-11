@@ -13,10 +13,6 @@ class CategoriasController:
             return False
         return True
 
-    @staticmethod
-    def esconde_invisiveis(categorias: list) -> list:
-        return list(filter(lambda c: c.visivel == 1, categorias))
-
     @classmethod
     def buscar(cls, id=None, nome=None, invisiveis=False) -> list:
         categorias = CategoriasDal()
@@ -29,7 +25,7 @@ class CategoriasController:
         else:
             listas = categorias.listar()
         if not invisiveis:
-            listas = cls.esconde_invisiveis(listas)
+            listas = list(filter(lambda x: x.visivel == 1, listas))
         return listas
 
     @classmethod

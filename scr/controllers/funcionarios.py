@@ -63,10 +63,6 @@ class FuncionariosController:
             return False
         return True
 
-    @staticmethod
-    def esconde_invisiveis(funcionarios: list) -> list:
-        return list(filter(lambda f: f.visivel == 1, funcionarios))
-
     @classmethod
     def buscar(cls, id=None, nome=None, invisiveis=False) -> list:
         funcionarios = FuncionariosDal()
@@ -79,7 +75,7 @@ class FuncionariosController:
         else:
             listas = funcionarios.listar()
         if not invisiveis:
-            listas = cls.esconde_invisiveis(listas)
+            listas = list(filter(lambda x: x.visivel == 1, listas))
         return listas
 
     @classmethod

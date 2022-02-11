@@ -13,10 +13,6 @@ class CargosController:
             return False
         return True
 
-    @staticmethod
-    def esconde_invisiveis(cargos: list) -> list:
-        return list(filter(lambda c: c.visivel == 1, cargos))
-
     @classmethod
     def buscar(cls, id=None, nome=None, invisiveis=False) -> list:
         cargos = CargosDal()
@@ -29,7 +25,7 @@ class CargosController:
         else:
             listas = cargos.listar()
         if not invisiveis:
-            listas = cls.esconde_invisiveis(listas)
+            listas = list(filter(lambda x: x.visivel == 1, listas))
         return listas
 
     @classmethod

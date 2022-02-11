@@ -61,10 +61,6 @@ class ClientesController:
             return False
         return True
 
-    @staticmethod
-    def esconde_invisiveis(clientes: list) -> list:
-        return list(filter(lambda c: c.visivel == 1, clientes))
-
     @classmethod
     def buscar(cls, id=None, nome=None, invisiveis=False) -> list:
         clientes = ClientesDal()
@@ -77,7 +73,7 @@ class ClientesController:
         else:
             listas = clientes.listar()
         if not invisiveis:
-            listas = cls.esconde_invisiveis(listas)
+            listas = list(filter(lambda x: x.visivel == 1, listas))
         return listas
 
     @classmethod

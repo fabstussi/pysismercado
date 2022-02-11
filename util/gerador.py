@@ -114,8 +114,3 @@ def validar_cnpj(cnpj: str) -> bool:
         if digito != int(cnpj[12 + i]):
             return False
     return True
-
-
-teste = gerar_cnpj()
-print(teste)
-print(validar_cnpj(teste))

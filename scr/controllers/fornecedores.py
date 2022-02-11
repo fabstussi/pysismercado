@@ -1,5 +1,5 @@
-from scr.models.fornecedores import Fornecedores
-from scr.dals.fornecedores import FornecedoresDal
+from models.fornecedores import Fornecedores
+from dals.fornecedores import FornecedoresDal
 from re import fullmatch
 from util.PyNumBR import ler_inteiro
 import util.PyUtilTerminal as put

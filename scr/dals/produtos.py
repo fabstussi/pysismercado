@@ -6,7 +6,7 @@ class ProdutosDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('pydb/produtos.txt', 'r') as arquivo:
+            with open('db/produtos.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -22,7 +22,7 @@ class ProdutosDal:
     @classmethod
     def salvar(cls, produto: Produtos, modo: str) -> bool:
         try:
-            with open('pydb/produtos.txt', modo) as arquivo:
+            with open('db/produtos.dbpy', modo) as arquivo:
                 arquivo.write(
                     f'{produto.id}|{produto.categoria}|{produto.fornecedor}' +
                     f'|{produto.nome}|{produto.quantidade}|{produto.custo}|' +
@@ -34,7 +34,7 @@ class ProdutosDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('pydb/produtos.txt', 'r') as arquivo:
+            with open('db/produtos.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

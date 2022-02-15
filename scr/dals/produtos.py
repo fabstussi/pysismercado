@@ -11,8 +11,8 @@ class ProdutosDal:
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
             return [Produtos(int(linha[0]), linha[1], linha[2], linha[3],
-                             linha[4], linha[5], linha[6], linha[7],
-                             int(linha[8])) for linha in linhas]
+                             int(linha[4]), float(linha[5]), float(linha[6]),
+                             linha[7], int(linha[8])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:

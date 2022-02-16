@@ -52,10 +52,8 @@ class CategoriasController:
         categoria = cls.buscar(id=id, invisiveis=tudo)
         if len(categoria) == 0:
             return 'Categoria não encontrada'
-        categoria[0].nome = novo_nome if novo_nome != categoria[0].nome else \
-            categoria[0].nome
-        categoria[0].descricao = nova_descricao if nova_descricao != \
-            categoria[0].descricao else categoria[0].descricao
+        categoria[0].nome = novo_nome
+        categoria[0].descricao = nova_descricao
         categoria[0].visivel = visivel
         for i, cat in enumerate(cls.buscar(invisiveis=True)):
             modo = 'w' if i == 0 else 'a'

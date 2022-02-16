@@ -57,10 +57,8 @@ class CargosController:
         cargo = cls.buscar(id=id, invisiveis=tudo)
         if len(cargo) == 0:
             return 'cargo não encontrado'
-        cargo[0].nome = novo_nome if novo_nome != cargo[0].nome else \
-            cargo[0].nome
-        cargo[0].privilegio = novo_privilegio if novo_privilegio != \
-            cargo[0].privilegio else cargo[0].privilegio
+        cargo[0].nome = novo_nome
+        cargo[0].privilegio = novo_privilegio
         cargo[0].visivel = visivel
         for i, cat in enumerate(cls.buscar(invisiveis=True)):
             modo = 'w' if i == 0 else 'a'

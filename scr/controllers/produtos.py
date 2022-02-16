@@ -87,6 +87,18 @@ class ProdutosController:
         return retorno
 
     @classmethod
+    def altera_estoque(cls, id: list, modificador: list):
+        for i_id, item_id in enumerate(id):
+            produto = cls.buscar(id=item_id)
+            produto[0].quantidade += modificador[i_id]
+            for i, prod in enumerate(cls.buscar(invisiveis=True)):
+                modo = 'w' if i == 0 else 'a'
+                if produto[0].id != prod.id:
+                    ProdutosDal.salvar(prod, modo)
+                else:
+                    ProdutosDal.salvar(produto[0], modo)
+
+    @classmethod
     def excluir(cls, id: int) -> str:
         produto = cls.buscar(id=id)
         if len(produto) == 0:

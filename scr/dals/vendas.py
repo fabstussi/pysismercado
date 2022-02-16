@@ -45,7 +45,3 @@ class VendasDal:
         except Exception as e:
             print(f'Erro: {e}')
             return -1
-
-
-if __name__ == '__main__':
-    pass

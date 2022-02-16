@@ -60,17 +60,17 @@ class CargosController:
         cargo[0].nome = novo_nome
         cargo[0].privilegio = novo_privilegio
         cargo[0].visivel = visivel
-        for i, cat in enumerate(cls.buscar(invisiveis=True)):
+        for i, car in enumerate(cls.buscar(invisiveis=True)):
             modo = 'w' if i == 0 else 'a'
-            if cargo[0].id != cat.id:
-                CargosDal.salvar(cat, modo)
+            if cargo[0].id != car.id:
+                CargosDal.salvar(car, modo)
             else:
-                if input(f'Confirme a alteração do cargo {cat.nome} ' +
+                if input(f'Confirme a alteração do cargo {car.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     CargosDal.salvar(cargo[0], modo)
                     retorno = f'cargo {novo_nome} alterado com sucesso!'
                 else:
-                    CargosDal.salvar(cat, modo)
+                    CargosDal.salvar(car, modo)
                     retorno = 'Operação cancelada'
         return retorno
 

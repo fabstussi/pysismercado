@@ -6,7 +6,7 @@ class VendasDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('pydb/vendas.txt', 'r') as arquivo:
+            with open('db/vendas.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -22,7 +22,7 @@ class VendasDal:
     @classmethod
     def salvar(cls, venda: Vendas, modo: str) -> bool:
         try:
-            with open('pydb/vendas.txt', modo) as arquivo:
+            with open('db/vendas.dbpy', modo) as arquivo:
                 arquivo.write(
                     f'{venda.cupom}|{venda.funcionario}|{venda.data}|' +
                     f'{venda.cliente}|{venda.compra}|{venda.valor}|' +
@@ -34,7 +34,7 @@ class VendasDal:
     @staticmethod
     def gera_cupom() -> int:
         try:
-            with open('pydb/vendas.txt', 'r') as arquivo:
+            with open('db/vendas.dbpy', 'r') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

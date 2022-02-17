@@ -140,3 +140,6 @@ cython_debug/
 
 # Arquivos dbpy
 *.dbpy
+
+# Arquivo Replit
+.replit

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from models.cargos import Cargos
 
 
@@ -6,7 +7,7 @@ class CargosDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('db/cargos.dbpy', 'r') as arquivo:
+            with open('db/cargos.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -21,7 +22,7 @@ class CargosDal:
     @classmethod
     def salvar(cls, cargo: Cargos, modo: str) -> bool:
         try:
-            with open('db/cargos.dbpy', modo) as arquivo:
+            with open('db/cargos.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(f'{cargo.id}|{cargo.nome}|{cargo.privilegio}|' +
                               f'{cargo.visivel}\n')
             return True
@@ -31,7 +32,7 @@ class CargosDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('db/cargos.dbpy', 'r') as arquivo:
+            with open('db/cargos.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from models.vendas import Vendas
 from util.PyNumBR import pega_data, pega_hora
 
@@ -7,7 +8,7 @@ class VendasDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('db/vendas.dbpy', 'r') as arquivo:
+            with open('db/vendas.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -23,7 +24,7 @@ class VendasDal:
     @classmethod
     def salvar(cls, venda: Vendas, modo: str) -> bool:
         try:
-            with open('db/vendas.dbpy', modo) as arquivo:
+            with open('db/vendas.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(
                     f'{venda.cupom}|{venda.funcionario}|{venda.data}|' +
                     f'{venda.cliente}|{venda.compra}|{venda.valor}|' +

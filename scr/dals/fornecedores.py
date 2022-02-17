@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from models.fornecedores import Fornecedores
 
 
@@ -6,7 +7,7 @@ class FornecedoresDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('db/fornecedores.dbpy', 'r') as arquivo:
+            with open('db/fornecedores.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -22,7 +23,7 @@ class FornecedoresDal:
     @classmethod
     def salvar(cls, fornecedor: Fornecedores, modo: str) -> bool:
         try:
-            with open('db/fornecedores.dbpy', modo) as arquivo:
+            with open('db/fornecedores.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(
                     f'{fornecedor.id}|{fornecedor.cnpj}|{fornecedor.nome}|' +
                     f'{fornecedor.telefone}|{fornecedor.categoria}|' +
@@ -34,7 +35,7 @@ class FornecedoresDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('db/fornecedores.dbpy', 'r') as arquivo:
+            with open('db/fornecedores.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

@@ -1,3 +1,5 @@
+
+# -*- coding: utf-8 -*-
 from models.categorias import Categorias
 
 
@@ -6,7 +8,7 @@ class CategoriasDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('db/categorias.dbpy', 'r') as arquivo:
+            with open('db/categorias.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -21,7 +23,7 @@ class CategoriasDal:
     @classmethod
     def salvar(cls, categoria: Categorias, modo: str) -> bool:
         try:
-            with open('db/categorias.dbpy', modo) as arquivo:
+            with open('db/categorias.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(
                     f'{categoria.id}|{categoria.nome}|{categoria.descricao}|' +
                     f'{categoria.visivel}\n')
@@ -32,7 +34,7 @@ class CategoriasDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('db/categorias.dbpy', 'r') as arquivo:
+            with open('db/categorias.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

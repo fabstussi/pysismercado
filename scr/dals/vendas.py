@@ -12,9 +12,8 @@ class VendasDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Vendas(linha[0], linha[1], linha[2], linha[3],
-                           float(linha[4]), float(linha[5]), int(linha[6])
-                           ) for linha in linhas]
+            return [Vendas(linha[0], linha[1], linha[2], linha[3], linha[4],
+                           float(linha[5]), int(linha[6])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:

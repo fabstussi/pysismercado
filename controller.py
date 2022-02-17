@@ -1,299 +1,42 @@
-from locale import setlocale, LC_ALL
+from scr.models.vendas import Vendas
+from scr.dals.vendas import VendasDal
 from datetime import datetime, timedelta
-from dao import CategoriasDao, FornecedoresDao, ProdutosDao, ClientesDao, CargosDao, VendedoresDao, VendasDao
-from model import Categorias, Fornecerdores, Produtos, Clientes, Cargos, Vendedores, Vendas
+from locale import setlocale, LC_ALL
+import util.PyNumBR as pnb
+import util.PyUtilTerminal as put
 
 
-setlocale(LC_ALL, 'pt_BR.UTF-8')
-MASCARA_DATA = '%d/%m/%Y'
-MASCARA_DATA_HORA = '%d/%m/%Y %H:%M:%S'
-FUSO = timedelta(hours=-3)
-
-
-class CatagoriasController:
+class VendasController:
 
     @classmethod
-    def buscar(cls, id=None, nome=None) -> list:
-        categorias = CategoriasDao()
+    def buscar(cls, id=None, data_i=None, data_f=None, invisiveis=False
+               ) -> list:
+        vendas = VendasDal()
         if id is not None:
-            listas = list(filter(lambda x: int(x.id)
-                          == id, categorias.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        elif nome is not None:
-            listas = list(filter(lambda x: x.nome == nome, categorias.listar()
-                                 ))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
+            listas = list(filter(lambda venda: venda.id == id,
+                                 vendas.listar()))
+        elif data_i is not None and data_f is None:
+            listas = list(filter(lambda venda: venda.data == data_i,
+                                 vendas.listar()))
+        elif data_i is not None and data_f is not None:
+            
         else:
-            return categorias.listar()
+            listas = vendas.listar()
+        if not invisiveis:
+            listas = list(filter(lambda x: x.visivel == 1, listas))
+        return listas
 
     @classmethod
-    def cadastrar(cls, nome: str, descricao: str) -> bool:
-        categorias = CategoriasDao()
-        listas = cls.buscar(nome=nome)
-        if len(listas) > 0:
-            return False
+    def cadastrar(cls, funcionario: str, cliente: str, compra: list,
+                  valor: float, visivel=1) -> str:
+        vendas = VendasDal()
+        n_cupom = vendas.gera_cupom()
+        venda = Vendas(n_cupom, funcionario, pnb.pega_data(), cliente, compra,
+                       valor, visivel)
+        if vendas.salvar(venda, 'a'):
+            return 'Venda cadastrada com sucesso'
         else:
-            id = categorias.gera_id()
-            if id == -1:
-                return False
-            resposta = categorias.salvar(Categorias(id, nome,
-                                         descricao), 'a')
-            return resposta
-
-    @classmethod
-    def editar(cls, id: int, novo_nome: str, descricao: str) -> bool:
-        categorias = CategoriasDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, categoria in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(categoria.id) != id:
-                    categorias.salvar(categoria, modo)
-                else:
-                    categorias.salvar(Categorias(id, novo_nome,
-                                                 descricao), modo)
-            return True
-        else:
-            return False
-
-    @classmethod
-    def excluir(cls, id: int) -> bool:
-        categorias = CategoriasDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, categoria in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(categoria.id) != id:
-                    categorias.salvar(categoria, modo)
-            return True
-        else:
-            return False
-
-
-class FornecedoresController:
-
-    @classmethod
-    def buscar(cls, id=None, nome=None) -> list:
-        fornecedores = FornecedoresDao()
-        if id is not None:
-            listas = list(filter(lambda x: int(x.id) == id,
-                                 fornecedores.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        elif nome is not None:
-            listas = list(filter(lambda x: x.nome ==
-                          nome, fornecedores.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        else:
-            return fornecedores.listar()
-
-    @classmethod
-    def cadastrar(cls, cnpj: str, nome: str, telefone: str,
-                  categoria: str) -> bool:
-        fornecedores = FornecedoresDao()
-        listas = cls.buscar(nome=nome)
-        if len(listas) > 0:
-            return False
-        else:
-            id = fornecedores.gera_id()
-            if id == -1:
-                return False
-            resposta = fornecedores.salvar(Fornecerdores(id, cnpj, nome,
-                                                         telefone, categoria),
-                                           'a')
-            return resposta
-
-    @classmethod
-    def editar(cls, id: int, novo_cnpj: str, novo_nome: str,
-               novo_telefone: str, nova_categoria: str) -> bool:
-        fornecedores = FornecedoresDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, fornecedor in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(fornecedor.id) != id:
-                    fornecedores.salvar(fornecedor, modo)
-                else:
-                    fornecedores.salvar(Fornecerdores(id, novo_cnpj,
-                                                      novo_nome, novo_telefone,
-                                                      nova_categoria), modo)
-            return True
-        else:
-            return False
-
-    @classmethod
-    def excluir(cls, id: int) -> bool:
-        fornecedores = FornecedoresDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, fornecedor in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(fornecedor.id) != id:
-                    fornecedores.salvar(fornecedor, modo)
-            return True
-        else:
-            return False
-
-
-class ProdutosController:
-
-    @classmethod
-    def buscar(cls, id=None, nome=None) -> list:
-        produtos = ProdutosDao()
-        if id is not None:
-            listas = list(filter(lambda x: int(x.id) == id,
-                                 produtos.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        elif nome is not None:
-            listas = list(filter(lambda x: x.nome ==
-                          nome, produtos.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        else:
-            return produtos.listar()
-
-    @classmethod
-    def cadastrar(cls, categoria: str, fornecedor: str, nome: str,
-                  quantidade: int, custo: float, preco: float, descricao: str
-                  ) -> bool:
-        produtos = ProdutosDao()
-        listas = cls.buscar(nome=nome)
-        if len(listas) > 0:
-            return False
-        else:
-            id = produtos.gera_id()
-            if id == -1:
-                return False
-            resposta = produtos.salvar(Produtos(id, categoria, fornecedor,
-                                                nome, quantidade, custo,
-                                                preco, descricao), 'a')
-            return resposta
-
-    @classmethod
-    def editar(cls, id, nova_categoria: str, novo_fornecedor: str,
-               novo_nome: str, nova_quantidade: int, novo_custo: float,
-               novo_preço: float, nova_descricao: str) -> bool:
-        produtos = ProdutosDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, produto in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(produto.id) != id:
-                    produtos.salvar(produto, modo)
-                else:
-                    produtos.salvar(Produtos(id, nova_categoria,
-                                             novo_fornecedor, novo_nome,
-                                             nova_quantidade, novo_custo,
-                                             novo_preço, nova_descricao), modo)
-            return True
-        else:
-            return False
-
-    @classmethod
-    def excluir(cls, id: int) -> bool:
-        produtos = ProdutosDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, produto in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(produto.id) != id:
-                    produtos.salvar(produto, modo)
-            return True
-        else:
-            return False
-
-
-class ClientesController:
-
-    @classmethod
-    def buscar(cls, id=None, nome=None) -> list:
-        clientes = ClientesDao()
-        if id is not None:
-            listas = list(filter(lambda x: int(x.id) == id,
-                                 clientes.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        elif nome is not None:
-            listas = list(filter(lambda x: x.nome ==
-                          nome, clientes.listar()))
-            if len(listas) > 0:
-                return listas
-            else:
-                return []
-        else:
-            return clientes.listar()
-
-    @classmethod
-    def cadastrar(cls, cpf: str, nome: str, telefone: str, sexo: str, ano_nasc
-                  ) -> bool:
-        clientes = ClientesDao()
-        listas = cls.buscar(nome=nome)
-        if len(listas) > 0:
-            return False
-        else:
-            id = clientes.gera_id()
-            if id == -1:
-                return False
-            resposta = clientes.salvar(
-                Clientes(id, cpf, nome, telefone, sexo, ano_nasc), 'a')
-            return resposta
-
-    @classmethod
-    def editar(cls, id: int, novo_cpf: str, novo_nome: str, novo_telefone: str,
-               novo_sexo: str, novo_ano) -> bool:
-        clientes = ClientesDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, cliente in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(cliente.id) != id:
-                    clientes.salvar(cliente, modo)
-                else:
-                    clientes.salvar(
-                        Clientes(id, novo_cpf, novo_nome, novo_telefone,
-                                 novo_sexo, novo_ano), modo)
-            return True
-        else:
-            return False
-
-    @classmethod
-    def excluir(cls, id: int) -> bool:
-        clientes = ClientesDao()
-        listas = cls.buscar(id=id)
-        if len(listas) > 0:
-            listas = cls.buscar()
-            for i, cliente in enumerate(listas):
-                modo = 'w' if i == 0 else 'a'
-                if int(cliente.id) != id:
-                    clientes.salvar(cliente, modo)
-            return True
-        else:
-            return False
+            return 'Erro não foi possível realizar o cadastro'
 
 
 if __name__ == '__main__':

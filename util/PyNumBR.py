@@ -4,10 +4,12 @@
 # Fabiano Stussi Pereira® - © 2021
 
 from datetime import datetime
+import pytz
 import locale
 
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+fuso = pytz.timezone('America/Sao_Paulo')
 
 
 def ler_inteiro(msg: str,
@@ -60,14 +62,14 @@ def pega_data() -> str:
     '''
     return: string com a data atual no formato dd/mm/aaaa.
     '''
-    return datetime.now().strftime('%d/%m/%Y')
+    return datetime.now(fuso).strftime('%d/%m/%Y')
 
 
 def pega_hora() -> str:
     '''
     return: string com a hora atual no formato hh:mm:ss.
     '''
-    return datetime.now().strftime('%H:%M:%S')
+    return datetime.now(fuso).strftime('%H:%M:%S')
 
 
 if __name__ == '__main__':

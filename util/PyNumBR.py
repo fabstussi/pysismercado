@@ -58,6 +58,15 @@ def mostra_real(num_float: float) -> str:
     return locale.format_string('%.2f', num_float, grouping=True)
 
 
+def mostra_BLR(num_float: float) -> str:
+    '''
+    Usado para exibir um número float em moeda Real do Brasil.
+    num_float: número real a ser exibido.
+    return: string com o número real formatado.
+    '''
+    return locale.currency(num_float, grouping=True)
+
+
 def pega_data() -> str:
     '''
     return: string com a data atual no formato dd/mm/aaaa.

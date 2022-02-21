@@ -32,26 +32,8 @@ class VendasDal:
         except Exception:
             return False
 
-    @classmethod
-    def cria_cupom(cls, venda: Vendas) -> bool:
-        pass
-        # try:
-        #     with open(f'cupom_{venda.cupom}.txt', 'w') as arquivo:
-        #         arquivo.write(
-        #             f'{venda.cupom}\n' +
-        #             f'{venda.funcionario}\n' +
-        #             f'{venda.data}\n' +
-        #             f'{venda.cliente}\n' +
-        #             f'{venda.compra}\n' +
-        #             f'{venda.valor}\n' +
-        #             f'{venda.visivel}\n')
-
-    @classmethod
-    def cria_relatorio(cls) -> bool:
-        pass
-
     @staticmethod
     def gera_cupom() -> str:
         data = pega_data().strip('/')
         hora = pega_hora().strip(':')
-        return f'{data[2]}{data[1]}{data[0]}{hora[2]}{hora[1]}'
+        return f'{data[2]}{data[1]}{data[0]}{hora[0]}{hora[1]}'

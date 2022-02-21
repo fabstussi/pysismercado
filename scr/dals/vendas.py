@@ -34,6 +34,15 @@ class VendasDal:
 
     @staticmethod
     def gera_cupom() -> str:
-        data = pega_data().strip('/')
-        hora = pega_hora().strip(':')
-        return f'{data[2]}{data[1]}{data[0]}{hora[0]}{hora[1]}'
+        try:
+            with open('db/vendas.dbpy', 'r', encoding='utf-8') as arquivo:
+                linhas = arquivo.readlines()
+            ultma_linha = [linhas.strip() for linhas in linhas][-1]
+            if len(ultma_linha) == 0:
+                return 1
+            return int(ultma_linha.split('|')[0]) + 1
+        except FileNotFoundError:
+            return 1
+        except Exception as e:
+            print(f'Erro: {e}')
+            return -1

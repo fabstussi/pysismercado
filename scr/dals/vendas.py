@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from models.vendas import Vendas
-from util.PyNumBR import pega_data, pega_hora
 
 
 class VendasDal:
@@ -33,7 +32,7 @@ class VendasDal:
             return False
 
     @staticmethod
-    def gera_cupom() -> str:
+    def gera_cupom() -> int:
         try:
             with open('db/vendas.dbpy', 'r', encoding='utf-8') as arquivo:
                 linhas = arquivo.readlines()

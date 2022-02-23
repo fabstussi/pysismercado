@@ -22,4 +22,4 @@ Linguagem: Python
 Armazenamento persistente dos dados: Arquivos de texto
 
 
-O projeto tem como base os conceitos iniciais do Python, é utilizada a estrutura de arquitetura MCV (Model, Controller, View).
+O projeto tem como base os conceitos iniciais do Python, é utilizada a estrutura de arquitetura MCV (Model, Dal, Controller, View).

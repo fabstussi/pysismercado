@@ -9,7 +9,7 @@ class CargosController:
     @staticmethod
     def valida_entrada_dados(nome: str, privilegio: str) -> bool:
         if (nome == '' or len(nome) <= 3) or \
-                (privilegio == '' or len(privilegio) <= 10):
+                (privilegio == '' or len(privilegio) <= 3):
             return False
         return True
 

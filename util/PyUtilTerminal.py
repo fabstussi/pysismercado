@@ -29,7 +29,7 @@ def titulo(texto: str, simbulo='*'):
     texto: texto a ser exibido.
     simbulo: simbolo a ser usado para desenhar o título.
     '''
-    texto = f'** {texto} **'
+    texto = f'{simbulo} {texto: ^0} {simbulo}'
     desenha_linha(f'{simbulo}', len(texto))
     print(texto)
     desenha_linha(f'{simbulo}', len(texto))

@@ -11,8 +11,8 @@ class CargosDal:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
-            return [Cargos(int(linha[0]), linha[1], linha[2], int(linha[3])
-                           ) for linha in linhas]
+            return [Cargos(int(linha[0]), linha[1], int(linha[2]),
+                           int(linha[3])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:

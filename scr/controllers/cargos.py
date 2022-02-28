@@ -7,9 +7,8 @@ import util.PyUtilTerminal as put
 class CargosController:
 
     @staticmethod
-    def valida_entrada_dados(nome: str, privilegio: str) -> bool:
-        if (nome == '' or len(nome) <= 3) or \
-                (privilegio == '' or len(privilegio) <= 3):
+    def valida_entrada_dados(nome: str) -> bool:
+        if (nome == '' or len(nome) <= 3):
             return False
         return True
 
@@ -35,7 +34,7 @@ class CargosController:
 
     @classmethod
     def cadastrar(cls, nome, privilegio, visivel=1) -> str:
-        if not cls.valida_entrada_dados(nome, privilegio):
+        if not cls.valida_entrada_dados(nome):
             return 'Dados inválidos'
         id = CargosDal.gera_id()
         cargo = Cargos(id, nome, privilegio, visivel)

@@ -75,33 +75,33 @@ class FuncionariosController:
 
     @classmethod
     def cadastrar(cls, cpf, nome, telefone, sexo, nasc, cargo, visivel=1
-                  ) -> str:
+                  ) -> tuple:
         if not cls.valida_entrada_dados(cpf, nome, telefone, sexo, nasc, cargo
                                         ):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = FuncionariosDal.gera_id()
         funcionario = Funcionarios(
             id, cpf, nome, telefone, sexo, nasc, cargo, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'funcionário já cadastrado'
+            return 1, 'Funcionário já cadastrado'
         elif FuncionariosDal.salvar(funcionario, 'a'):
-            return f'funcionário {nome} cadastrado com sucesso!'
+            return 0, f'Funcionário {nome} cadastrado com sucesso'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Erro ao cadastrar funcionário'
 
     @classmethod
     def alterar(cls, id: int, novo_cpf: str, novo_nome: str,
                 novo_telefone: str, novo_sexo: str, novo_nasc: int,
-                novo_cargo: str, visivel=1, tudo=False) -> str:
+                novo_cargo: str, visivel=1, tudo=False) -> tuple:
         if not cls.valida_entrada_dados(novo_cpf, novo_nome, novo_telefone,
                                         novo_sexo, novo_nasc, novo_cargo):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         funcionario = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(funcionario) > 0 and funcionario[0].id != id:
-            return f'{novo_nome} já cadastrado no ID: {funcionario[0].id}'
+            return 1, f'{novo_nome} já cadastrado no ID: {funcionario[0].id}'
         funcionario = cls.buscar(id=id, invisiveis=tudo)
         if len(funcionario) == 0:
-            return 'Funcionário não encontrado'
+            return -1, 'Funcionário não encontrado'
         funcionario[0].cpf = novo_cpf
         funcionario[0].nome = novo_nome
         funcionario[0].telefone = novo_telefone
@@ -117,28 +117,28 @@ class FuncionariosController:
                 if input(f'Confirme a alteração do funcionário {func.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     FuncionariosDal.salvar(funcionario[0], modo)
-                    retorno = f'funcionário {novo_nome} alterado com sucesso!'
+                    retorno = (0, f'funcionário {novo_nome} alterado com sucesso!')
                 else:
                     FuncionariosDal.salvar(func, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = (0, 'Operação cancelada')
         return retorno
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         funcionario = cls.buscar(id=id)
         if len(funcionario) == 0:
-            return 'Funcionário não encontrado'
+            return -1, 'Funcionário não encontrado'
         return cls.alterar(id, funcionario[0].cpf, funcionario[0].nome,
                            funcionario[0].telefone, funcionario[0].sexo,
                            funcionario[0].ano_nasc, funcionario[0].cargo, 0)
 
     @classmethod
-    def recuperar_apagadas(cls) -> str:
+    def recuperar_apagadas(cls) -> tuple:
         funcionarios = cls.buscar(invisiveis=True)
         funcionarios = list(filter(lambda c: c.visivel == 0, funcionarios))
         lista_ids = [c.id for c in funcionarios]
         if len(funcionarios) == 0:
-            return 'Não há funcionários excluídos'
+            return 1, 'Não há funcionários excluídos'
         while True:
             put.titulo('funcionários excluídos:')
             for funcionario in funcionarios:

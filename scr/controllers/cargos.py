@@ -33,29 +33,29 @@ class CargosController:
         return cargo[0].privilegio == privilegio_necessario
 
     @classmethod
-    def cadastrar(cls, nome, privilegio, visivel=1) -> str:
+    def cadastrar(cls, nome, privilegio, visivel=1) -> tuple:
         if not cls.valida_entrada_dados(nome):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = CargosDal.gera_id()
         cargo = Cargos(id, nome, privilegio, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'cargo já cadastrado'
+            return 0, 'Cargo já cadastrado'
         elif CargosDal.salvar(cargo, 'a'):
-            return f'cargo {nome} cadastrado com sucesso!'
+            return 1, f'Cargo {nome} cadastrado com sucesso'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Não foi possível cadastrar o cargo'
 
     @classmethod
     def alterar(cls, id: int, novo_nome: str, novo_privilegio: str, visivel=1,
-                tudo=False) -> str:
-        if not cls.valida_entrada_dados(novo_nome, novo_privilegio):
-            return 'Dados inválidos'
+                tudo=False) -> tuple:
+        if not cls.valida_entrada_dados(novo_nome):
+            return -1, 'Dados inválidos'
         cargo = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(cargo) > 0 and cargo[0].id != id:
-            return f'{novo_nome} já cadastrado no ID: {cargo[0].id}'
+            return 1, f'{novo_nome} já cadastrado no ID: {cargo[0].id}'
         cargo = cls.buscar(id=id, invisiveis=tudo)
         if len(cargo) == 0:
-            return 'cargo não encontrado'
+            return -1, 'cargo não encontrado'
         cargo[0].nome = novo_nome
         cargo[0].privilegio = novo_privilegio
         cargo[0].visivel = visivel
@@ -67,26 +67,26 @@ class CargosController:
                 if input(f'Confirme a alteração do cargo {car.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     CargosDal.salvar(cargo[0], modo)
-                    retorno = f'cargo {novo_nome} alterado com sucesso!'
+                    retorno = (0, f'cargo {novo_nome} alterado com sucesso!')
                 else:
                     CargosDal.salvar(car, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = (0, 'Operação cancelada')
         return retorno
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         cargo = cls.buscar(id=id)
         if len(cargo) == 0:
-            return 'cargo não encontrado'
+            return -1, 'cargo não encontrado'
         return cls.alterar(id, cargo[0].nome, cargo[0].privilegio, 0)
 
     @classmethod
-    def recuperar_apagados(cls) -> str:
+    def recuperar_apagados(cls) -> tuple:
         cargos = cls.buscar(invisiveis=True)
         cargos = list(filter(lambda c: c.visivel == 0, cargos))
         lista_ids = [c.id for c in cargos]
         if len(cargos) == 0:
-            return 'Não há cargos excluídos'
+            return 1, 'Não há cargos excluídos'
         while True:
             put.titulo('cargos excluídos:')
             for cargo in cargos:

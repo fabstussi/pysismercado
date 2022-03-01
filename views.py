@@ -1,3 +1,4 @@
+from pyexpat import model
 import util.gerador as gera
 import util.PyNumBR as pnb
 import util.PyUtilTerminal as put
@@ -21,7 +22,9 @@ TITULO_PRINCIPAL = [
     ' ',
     'Sistema de Mercadinhos',
     'v. 1.0',
-    ' '
+    ' ',
+    'Usuário: ',
+    'Menu: '
 ]
 MENU_PRINCIPAL = [
     'Administrativo',
@@ -68,7 +71,295 @@ MENU_GERENCIAR_CARGOS = [
     'Consultar cadastro',
     'Alterar cargo',
     'Excluir cargo',
+    'Recuperar excluídos',
+    'Retornar'
+]
+MENU_GERENCIAR_CATEGORIAS = [
+    'Cadastrar nova categoria',
+    'Consultar categorias cadastradas',
+    'Alterar categoria',
+    'Excluir categoria',
+    'Recuperar excluídos',
+    'Retornar'
+]
+MENU_GERENCIAR_CLIENTES = [
+    'Cadastrar novo cliente',
+    'Consultar clientes cadastrados',
+    'Alterar dados de clientes',
+    'Excluir cliente',
+    'Recuperar excluídos',
+    'Retornar'
+]
+MENU_GERENCIAR_FORNECEDORES = [
+    'Cadastrar novo fornecedor',
+    'Consultar fornecedores cadastrados',
+    'Alterar dados de fornecedores',
+    'Excluir fornecedor',
+    'Recuperar excluídos',
+    'Retornar'
+]
+MENU_GERENCIAR_FUNCIONARIOS = [
+    'Cadastrar novo funcionário',
+    'Consultar dados dos funcionários',
+    'Alterar dados de funcionários',
+    'Excluir funcionário',
+    'Recuperar excluídos',
+    'Retornar'
+]
+MENU_GERENCIAR_PRODUTOS = [
+    'Cadastrar novo produto',
+    'Consultar produtos cadastrados',
+    'Alterar dados de produtos',
+    'Excluir produto',
+    'Recuperar excluídos',
     'Retornar'
 ]
 
 
+def cabecalho() -> None:
+    put.limpa_tela()
+    put.titulo_ml(TITULO_PRINCIPAL, 'c')
+
+
+def criar_usuario_inicial() -> bool:
+    import os
+    TITULO_PRINCIPAL[5] = 'Criar usuário inicial'
+    cabecalho()
+    local_arquivos = os.path.dirname(os.path.abspath(__file__))
+    arquivo_cargos = f'{local_arquivos}/db/cargos.dbpy'
+    arquivo_funcionarios = f'{local_arquivos}/db/funcionarios.dbpy'
+    if not os.path.exists(arquivo_cargos):
+        resposta = CARGOS.cadastrar('Administrador', 0)
+        put.titulo(resposta[1])
+        if resposta[0] == -2:
+            exit(1)
+        elif resposta[0] != 1:
+            return False
+    if not os.path.exists(arquivo_funcionarios):
+        put.titulo('Cadastro do Administrador do Sistema')
+        cpf = gera.gerar_cpf(mascara=True)
+        nome = input('Nome: ').upper()
+        telefone = gera.gerar_telefone(celular=True, mascara=True)
+        sexo = input('Sexo: ')[0].upper()
+        nasc = pnb.ler_inteiro('Ano de nascimento: ')
+        cargo = CARGOS.buscar(id=1)[0].nome
+        resposta = FUNCIONARIOS.cadastrar(
+            cpf,
+            nome,
+            telefone,
+            sexo,
+            nasc,
+            cargo
+        )
+        put.titulo(resposta[1])
+        if resposta[0] == -2:
+            exit(1)
+        elif resposta[0] != 0:
+            return False
+        else:
+            put.titulo_ml(
+                [
+                    'Usuário administrador configurado com sucesso!',
+                    'Utilize o "ID 1" para entrar no sistema.'
+                ],
+                'e'
+            )
+    return True
+
+
+def login():
+    TITULO_PRINCIPAL[5] = 'Login'
+    cabecalho()
+    put.titulo('Identifique-se com o número de identificação')
+    id = pnb.ler_inteiro('ID: ')
+    if len(FUNCIONARIOS.buscar(id=id)) == 0:
+        put.titulo('ID não encontrado!')
+        input('Pressione ENTER para continuar...')
+        return login()
+    else:
+        return FUNCIONARIOS.buscar(id=id)[0]
+
+
+def view_menu_administrativo(id_funcionario: int) -> None:
+    if CARGOS.autorizacao(id_funcionario, 0) or \
+            CARGOS.autorizacao(id_funcionario, 1):
+        while True:
+            TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo'
+            cabecalho()
+            put.cria_menu(MENU_ADMINISTRATIVO)
+            opcao = pnb.ler_inteiro('Escolha uma opção: ')
+            if opcao == 1:
+                view_menu_gerenciamento()
+            if opcao == 1:
+                pass
+            if opcao == 1:
+                pass
+            if opcao == 4:
+                break
+    else:
+        put.titulo('Acesso negado, privilégio insuficiente!')
+
+
+def view_menu_gerenciamento() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Gerenciamento'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAMENTO)
+        opcao = pnb.ler_inteiro('Escolha uma opção: ')
+        if opcao == 1:
+            view_menu_gerenciar_cargos()
+        if opcao == 2:
+            pass
+        if opcao == 3:
+            pass
+        if opcao == 4:
+            pass
+        if opcao == 5:
+            pass
+        if opcao == 6:
+            pass
+        if opcao == 7:
+            break
+
+
+def view_menu_gerenciar_cargos() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Gerenciar -> Cargos'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_CARGOS)
+        opcao = pnb.ler_inteiro('Escolha uma opção: ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar novo cargo'
+            cabecalho()
+            nome = input('Nome: ').capitalize()
+            put.cria_menu(
+                [
+                    'Administrador',
+                    'Gerente',
+                    'Vendedor'
+                ]
+            )
+            privilegio = pnb.ler_inteiro('Escolha uma opção: ') - 1
+            resposta = CARGOS.cadastrar(nome, privilegio)
+            put.titulo(resposta[1])
+            if resposta[0] != 1:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            else:
+                input('Pressione ENTER para continuar...')
+        if opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar por...'
+            cabecalho()
+            legenda_permissoes = {
+                0: 'Administrador',
+                1: 'Gerente',
+                2: 'Vendedor'
+
+            }
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos',
+                    'Voltar'
+                ]
+            )
+            opcao = pnb.ler_inteiro('Escolha uma opção: ')
+            if opcao == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar por ID'
+                cabecalho()
+                id_cargo = pnb.ler_inteiro('ID: ')
+                if len(CARGOS.buscar(id=id_cargo)) == 0:
+                    put.titulo('ID não encontrado!')
+                else:
+                    cargo = CARGOS.buscar(id=id_cargo)[0]
+                    put.titulo_ml(
+                        [
+                            f'ID: {cargo.id}',
+                            f'Nome: {cargo.nome}',
+                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            if opcao == 2:
+                TITULO_PRINCIPAL[5] = 'Consultar por nome'
+                cabecalho()
+                nome = input('Nome: ').capitalize()
+                if len(CARGOS.buscar(nome=nome)) == 0:
+                    put.titulo('Nome não encontrado!')
+                else:
+                    cargo = CARGOS.buscar(nome=nome)[0]
+                    put.titulo_ml(
+                        [
+                            f'ID: {cargo.id}',
+                            f'Nome: {cargo.nome}',
+                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            if opcao == 3:
+                TITULO_PRINCIPAL[5] = 'Consultar todos'
+                cabecalho()
+                for cargo in CARGOS.buscar():
+                    put.titulo_ml(
+                        [
+                            f'ID: {cargo.id}',
+                            f'Nome: {cargo.nome}',
+                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            if opcao == 4:
+                break
+        if opcao == 3:
+            pass
+        if opcao == 4:
+            pass
+        if opcao == 5:
+            pass
+        if opcao == 6:
+            break
+
+
+def view_menu_operacional() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Operacional'
+        cabecalho()
+        put.cria_menu(MENU_OPERACIONAL)
+        opcao = pnb.ler_inteiro('Escolha uma opção: ')
+        if opcao == 1:
+            pass
+        if opcao == 2:
+            pass
+        if opcao == 3:
+            pass
+        if opcao == 4:
+            break
+
+
+if not criar_usuario_inicial():
+    print('Erro inesperado no sistema, por favor, tente novamente.')
+    exit(1)
+
+funcionario_atual = login()
+
+TITULO_PRINCIPAL[4] = f'Usurário: {funcionario_atual.nome}'
+
+while True:
+    TITULO_PRINCIPAL[5] = 'MENU: Principal'
+    cabecalho()
+    put.cria_menu(MENU_PRINCIPAL)
+    opcao = pnb.ler_inteiro('Escolha uma opção: ')
+    if opcao == 1:
+        view_menu_administrativo(funcionario_atual.id)
+    if opcao == 2:
+        view_menu_operacional(funcionario_atual.id)
+    if opcao == 3:
+        funcionario_atual = login()
+    if opcao == 4:
+        if input('Deseja realmente sair? (s/n) ').upper() == 'S':
+            break
+
+put.titulo('Execução finalizada')

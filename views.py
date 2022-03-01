@@ -314,9 +314,67 @@ def view_menu_gerenciar_cargos() -> None:
             if opcao == 4:
                 break
         if opcao == 3:
-            pass
+            TITULO_PRINCIPAL[5] = 'Alterações de dados'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'Nome',
+                    'Privilegio'
+                ]
+            )
+            opcao = pnb.ler_inteiro('O que deseja alterar?: ')
+            if opcao == 1:
+                TITULO_PRINCIPAL[5] = 'Alterar nome'
+                cabecalho()
+                id_cargo = pnb.ler_inteiro('ID: ')
+                if len(CARGOS.buscar(id=id_cargo)) == 0:
+                    put.titulo('ID não encontrado!')
+                else:
+                    cargo = CARGOS.buscar(id=id_cargo)
+                    put.titulo_ml(
+                        [
+                            'Cargo atual:',
+                            f'ID: {cargo.id}',
+                            f'Nome: {cargo.nome}',
+                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                        ]
+                    )
+                    if input('Confirma o Cargo a ser alterado? (S/N) ').upper() == 'S':
+                        nome = input('Novo nome: ').capitalize()
+                        resposta = CARGOS.alterar(id_cargo, nome, cargo.privilegio)
+                        put.titulo(resposta[1])
+                        if resposta[0] != 1:
+                            if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                                continue
+                            else:
+                                break
+                        put.titulo('Alteração realizada com sucesso!')
+                input('Pressione ENTER para continuar...')
         if opcao == 4:
-            pass
+            TITULO_PRINCIPAL[5] = 'Exclusão de cargo'
+            cabecalho()
+            id_cargo = pnb.ler_inteiro('ID: ')
+            if len(CARGOS.buscar(id=id_cargo)) == 0:
+                put.titulo('ID não encontrado!')
+            else:
+                cargo = CARGOS.buscar(id=id_cargo)[0]
+                put.titulo_ml(
+                    [
+                        f'ID: {cargo.id}',
+                        f'Nome: {cargo.nome}',
+                        f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                    ]
+                )
+                if input('Confirma a exclusão do cargo? (S/N) ').upper() == 'S':
+                    resposta = CARGOS.excluir(id_cargo)
+                    put.titulo(resposta[1])
+                    if resposta[0] != 1:
+                        if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                            continue
+                        else:
+                            break
+                    put.titulo('Exclusão realizada com sucesso!')
+            input('Pressione ENTER para continuar...')
         if opcao == 5:
             pass
         if opcao == 6:

@@ -138,7 +138,7 @@ class FuncionariosController:
         funcionarios = list(filter(lambda c: c.visivel == 0, funcionarios))
         lista_ids = [c.id for c in funcionarios]
         if len(funcionarios) == 0:
-            return 1, 'Não há funcionários excluídos'
+            return -1, 'Não há funcionários excluídos'
         while True:
             put.titulo('funcionários excluídos:')
             for funcionario in funcionarios:

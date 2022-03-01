@@ -133,7 +133,7 @@ def criar_usuario_inicial() -> bool:
         put.titulo(resposta[1])
         if resposta[0] == -2:
             exit(1)
-        elif resposta[0] != 1:
+        elif resposta[0] != 0:
             return False
     if not os.path.exists(arquivo_funcionarios):
         put.titulo('Cadastro do Administrador do Sistema')
@@ -190,11 +190,11 @@ def view_menu_administrativo(id_funcionario: int) -> None:
             opcao = pnb.ler_inteiro('Escolha uma opção: ')
             if opcao == 1:
                 view_menu_gerenciamento()
-            if opcao == 1:
+            elif opcao == 1:
                 pass
-            if opcao == 1:
+            elif opcao == 1:
                 pass
-            if opcao == 4:
+            elif opcao == 4:
                 break
     else:
         put.titulo('Acesso negado, privilégio insuficiente!')
@@ -208,17 +208,17 @@ def view_menu_gerenciamento() -> None:
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             view_menu_gerenciar_cargos()
-        if opcao == 2:
+        elif opcao == 2:
             pass
-        if opcao == 3:
+        elif opcao == 3:
             pass
-        if opcao == 4:
+        elif opcao == 4:
             pass
-        if opcao == 5:
+        elif opcao == 5:
             pass
-        if opcao == 6:
+        elif opcao == 6:
             pass
-        if opcao == 7:
+        elif opcao == 7:
             break
 
 
@@ -227,6 +227,11 @@ def view_menu_gerenciar_cargos() -> None:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Gerenciar -> Cargos'
         cabecalho()
         put.cria_menu(MENU_GERENCIAR_CARGOS)
+        legenda_permissoes = {
+            0: 'Administrador',
+            1: 'Gerente',
+            2: 'Vendedor'
+        }
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             TITULO_PRINCIPAL[5] = 'Cadastrar novo cargo'
@@ -242,22 +247,15 @@ def view_menu_gerenciar_cargos() -> None:
             privilegio = pnb.ler_inteiro('Escolha uma opção: ') - 1
             resposta = CARGOS.cadastrar(nome, privilegio)
             put.titulo(resposta[1])
-            if resposta[0] != 1:
+            if resposta[0] != 0:
                 if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
                     continue
                 else:
                     break
-            else:
-                input('Pressione ENTER para continuar...')
-        if opcao == 2:
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
             TITULO_PRINCIPAL[5] = 'Consultar por...'
             cabecalho()
-            legenda_permissoes = {
-                0: 'Administrador',
-                1: 'Gerente',
-                2: 'Vendedor'
-
-            }
             put.cria_menu(
                 [
                     'ID',
@@ -271,49 +269,55 @@ def view_menu_gerenciar_cargos() -> None:
                 TITULO_PRINCIPAL[5] = 'Consultar por ID'
                 cabecalho()
                 id_cargo = pnb.ler_inteiro('ID: ')
-                if len(CARGOS.buscar(id=id_cargo)) == 0:
+                cargo = CARGOS.buscar(id=id_cargo)
+                if len(cargo) == 0:
                     put.titulo('ID não encontrado!')
-                else:
-                    cargo = CARGOS.buscar(id=id_cargo)[0]
-                    put.titulo_ml(
-                        [
-                            f'ID: {cargo.id}',
-                            f'Nome: {cargo.nome}',
-                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
-                        ]
-                    )
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {cargo[0].id}',
+                        f'Nome: {cargo[0].nome}',
+                        f'Privilégio: {legenda_permissoes[cargo[0].privilegio]}'
+                    ]
+                )
                 input('Pressione ENTER para continuar...')
-            if opcao == 2:
+            elif opcao == 2:
                 TITULO_PRINCIPAL[5] = 'Consultar por nome'
                 cabecalho()
                 nome = input('Nome: ').capitalize()
-                if len(CARGOS.buscar(nome=nome)) == 0:
+                cargo = CARGOS.buscar(nome=nome)
+                if len(cargo) == 0:
                     put.titulo('Nome não encontrado!')
-                else:
-                    cargo = CARGOS.buscar(nome=nome)[0]
-                    put.titulo_ml(
-                        [
-                            f'ID: {cargo.id}',
-                            f'Nome: {cargo.nome}',
-                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
-                        ]
-                    )
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {cargo[0].id}',
+                        f'Nome: {cargo[0].nome}',
+                        f'Privilégio: {legenda_permissoes[cargo[0].privilegio]}'
+                    ]
+                )
                 input('Pressione ENTER para continuar...')
-            if opcao == 3:
+            elif opcao == 3:
                 TITULO_PRINCIPAL[5] = 'Consultar todos'
                 cabecalho()
+                if len(CARGOS.buscar()) == 0:
+                    put.titulo('Nenhum cargo cadastrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
                 for cargo in CARGOS.buscar():
                     put.titulo_ml(
                         [
                             f'ID: {cargo.id}',
                             f'Nome: {cargo.nome}',
-                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                            f'Privilégio: {legenda_permissoes[cargo.privilegio]}'
                         ]
                     )
                 input('Pressione ENTER para continuar...')
-            if opcao == 4:
+            elif opcao == 4:
                 break
-        if opcao == 3:
+        elif opcao == 3:
             TITULO_PRINCIPAL[5] = 'Alterações de dados'
             cabecalho()
             put.cria_menu(
@@ -327,57 +331,100 @@ def view_menu_gerenciar_cargos() -> None:
                 TITULO_PRINCIPAL[5] = 'Alterar nome'
                 cabecalho()
                 id_cargo = pnb.ler_inteiro('ID: ')
-                if len(CARGOS.buscar(id=id_cargo)) == 0:
+                cargo = CARGOS.buscar(id=id_cargo)
+                if len(cargo) == 0:
                     put.titulo('ID não encontrado!')
-                else:
-                    cargo = CARGOS.buscar(id=id_cargo)
-                    put.titulo_ml(
-                        [
-                            'Cargo atual:',
-                            f'ID: {cargo.id}',
-                            f'Nome: {cargo.nome}',
-                            f'Permissão: {legenda_permissoes[cargo.privilegio]}'
-                        ]
-                    )
-                    if input('Confirma o Cargo a ser alterado? (S/N) ').upper() == 'S':
-                        nome = input('Novo nome: ').capitalize()
-                        resposta = CARGOS.alterar(id_cargo, nome, cargo.privilegio)
-                        put.titulo(resposta[1])
-                        if resposta[0] != 1:
-                            if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
-                                continue
-                            else:
-                                break
-                        put.titulo('Alteração realizada com sucesso!')
-                input('Pressione ENTER para continuar...')
-        if opcao == 4:
-            TITULO_PRINCIPAL[5] = 'Exclusão de cargo'
-            cabecalho()
-            id_cargo = pnb.ler_inteiro('ID: ')
-            if len(CARGOS.buscar(id=id_cargo)) == 0:
-                put.titulo('ID não encontrado!')
-            else:
-                cargo = CARGOS.buscar(id=id_cargo)[0]
+                    input('Pressione ENTER para continuar...')
+                    continue
                 put.titulo_ml(
                     [
-                        f'ID: {cargo.id}',
-                        f'Nome: {cargo.nome}',
-                        f'Permissão: {legenda_permissoes[cargo.privilegio]}'
+                        'Cargo atual:',
+                        f'ID: {cargo[0].id}',
+                        f'Nome: {cargo[0].nome}',
                     ]
                 )
-                if input('Confirma a exclusão do cargo? (S/N) ').upper() == 'S':
-                    resposta = CARGOS.excluir(id_cargo)
+                if input('Alterar este cargo? (S/N) ').upper() == 'S':
+                    nome = input('Novo nome: ').capitalize()
+                    resposta = CARGOS.alterar(
+                        id_cargo, nome, cargo[0].privilegio)
                     put.titulo(resposta[1])
-                    if resposta[0] != 1:
-                        if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    if resposta[0] != 0:
+                        if input('Tentar novamente? (S/N) ').upper() == 'S':
                             continue
                         else:
                             break
-                    put.titulo('Exclusão realizada com sucesso!')
+                    input('Pressione ENTER para continuar...')
+            elif opcao == 2:
+                TITULO_PRINCIPAL[5] = 'Alterar permissão'
+                cabecalho()
+                id_cargo = pnb.ler_inteiro('ID: ')
+                cargo = CARGOS.buscar(id=id_cargo)
+                if len(cargo) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        'Cargo atual:',
+                        f'ID: {cargo[0].id}',
+                        f'Nome: {cargo[0].nome}',
+                        f'Permissão: {legenda_permissoes[cargo[0].privilegio]}'
+                    ]
+                )
+                put.cria_menu(
+                    [
+                        'Administrador',
+                        'Gerente',
+                        'Vendedor'
+                    ]
+                )
+                privilegio = pnb.ler_inteiro('Novo privilegio: ') - 1
+                if input('Alterar este cargo? (S/N) ').upper() == 'S':
+                    resposta = CARGOS.alterar(
+                        id_cargo, cargo[0].nome, privilegio)
+                    put.titulo(resposta[1])
+                    if resposta[0] != 0:
+                        if input('Tentar novamente? (S/N) ').upper() == 'S':
+                            continue
+                        else:
+                            break
+                    input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Exclusão de cargo'
+            cabecalho()
+            id_cargo = pnb.ler_inteiro('ID: ')
+            cargo = CARGOS.buscar(id=id_cargo)
+            if len(cargo) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {cargo[0].id}',
+                    f'Nome: {cargo[0].nome}',
+                    f'Permissão: {legenda_permissoes[cargo[0].privilegio]}'
+                ]
+            )
+            if input('Confirma a exclusão do cargo? (S/N) ').upper() == 'S':
+                resposta = CARGOS.excluir(id_cargo)
+                put.titulo(resposta[1])
+                if resposta[0] != 0:
+                    if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                        continue
+                    else:
+                        break
+                put.titulo('Exclusão realizada com sucesso!')
             input('Pressione ENTER para continuar...')
-        if opcao == 5:
-            pass
-        if opcao == 6:
+        elif opcao == 5:
+            resposta = CARGOS.recuperar_apagados()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
             break
 
 

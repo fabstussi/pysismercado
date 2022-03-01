@@ -39,9 +39,9 @@ class CargosController:
         id = CargosDal.gera_id()
         cargo = Cargos(id, nome, privilegio, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 0, 'Cargo já cadastrado'
+            return 1, 'Cargo já cadastrado'
         elif CargosDal.salvar(cargo, 'a'):
-            return 1, f'Cargo {nome} cadastrado com sucesso'
+            return 0, f'Cargo {nome} cadastrado com sucesso'
         else:
             return -2, 'Não foi possível cadastrar o cargo'
 
@@ -86,7 +86,7 @@ class CargosController:
         cargos = list(filter(lambda c: c.visivel == 0, cargos))
         lista_ids = [c.id for c in cargos]
         if len(cargos) == 0:
-            return 1, 'Não há cargos excluídos'
+            return -1, 'Não há cargos excluídos'
         while True:
             put.titulo('cargos excluídos:')
             for cargo in cargos:

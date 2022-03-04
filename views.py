@@ -1,4 +1,3 @@
-from pyexpat import model
 import util.gerador as gera
 import util.PyNumBR as pnb
 import util.PyUtilTerminal as put
@@ -202,14 +201,15 @@ def view_menu_administrativo(id_funcionario: int) -> None:
 
 def view_menu_gerenciamento() -> None:
     while True:
-        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Gerenciamento'
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciamento'
         cabecalho()
         put.cria_menu(MENU_GERENCIAMENTO)
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             view_menu_gerenciar_cargos()
         elif opcao == 2:
-            pass
+            view_menu_gerenciar_categorias()
         elif opcao == 3:
             pass
         elif opcao == 4:
@@ -224,14 +224,15 @@ def view_menu_gerenciamento() -> None:
 
 def view_menu_gerenciar_cargos() -> None:
     while True:
-        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Gerenciar -> Cargos'
-        cabecalho()
-        put.cria_menu(MENU_GERENCIAR_CARGOS)
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Cargos'
         legenda_permissoes = {
             0: 'Administrador',
             1: 'Gerente',
             2: 'Vendedor'
         }
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_CARGOS)
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             TITULO_PRINCIPAL[5] = 'Cadastrar novo cargo'
@@ -320,57 +321,23 @@ def view_menu_gerenciar_cargos() -> None:
         elif opcao == 3:
             TITULO_PRINCIPAL[5] = 'Alterações de dados'
             cabecalho()
+            id_cargo = pnb.ler_inteiro('ID: ')
+            cargo = CARGOS.buscar(id=id_cargo)
+            if len(cargo) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
             put.cria_menu(
                 [
                     'Nome',
                     'Privilegio'
                 ]
             )
-            opcao = pnb.ler_inteiro('O que deseja alterar?: ')
-            if opcao == 1:
-                TITULO_PRINCIPAL[5] = 'Alterar nome'
-                cabecalho()
-                id_cargo = pnb.ler_inteiro('ID: ')
-                cargo = CARGOS.buscar(id=id_cargo)
-                if len(cargo) == 0:
-                    put.titulo('ID não encontrado!')
-                    input('Pressione ENTER para continuar...')
-                    continue
-                put.titulo_ml(
-                    [
-                        'Cargo atual:',
-                        f'ID: {cargo[0].id}',
-                        f'Nome: {cargo[0].nome}',
-                    ]
-                )
-                if input('Alterar este cargo? (S/N) ').upper() == 'S':
-                    nome = input('Novo nome: ').capitalize()
-                    resposta = CARGOS.alterar(
-                        id_cargo, nome, cargo[0].privilegio)
-                    put.titulo(resposta[1])
-                    if resposta[0] != 0:
-                        if input('Tentar novamente? (S/N) ').upper() == 'S':
-                            continue
-                        else:
-                            break
-                    input('Pressione ENTER para continuar...')
-            elif opcao == 2:
-                TITULO_PRINCIPAL[5] = 'Alterar permissão'
-                cabecalho()
-                id_cargo = pnb.ler_inteiro('ID: ')
-                cargo = CARGOS.buscar(id=id_cargo)
-                if len(cargo) == 0:
-                    put.titulo('ID não encontrado!')
-                    input('Pressione ENTER para continuar...')
-                    continue
-                put.titulo_ml(
-                    [
-                        'Cargo atual:',
-                        f'ID: {cargo[0].id}',
-                        f'Nome: {cargo[0].nome}',
-                        f'Permissão: {legenda_permissoes[cargo[0].privilegio]}'
-                    ]
-                )
+            opc = pnb.ler_inteiro('O que deseja alterar?: ')
+            if opc == 1:
+                nome = input('Novo nome: ').capitalize()
+                resposta = CARGOS.alterar(id_cargo, nome, cargo[0].privilegio)
+            elif opc == 2:
                 put.cria_menu(
                     [
                         'Administrador',
@@ -379,16 +346,14 @@ def view_menu_gerenciar_cargos() -> None:
                     ]
                 )
                 privilegio = pnb.ler_inteiro('Novo privilegio: ') - 1
-                if input('Alterar este cargo? (S/N) ').upper() == 'S':
-                    resposta = CARGOS.alterar(
-                        id_cargo, cargo[0].nome, privilegio)
-                    put.titulo(resposta[1])
-                    if resposta[0] != 0:
-                        if input('Tentar novamente? (S/N) ').upper() == 'S':
-                            continue
-                        else:
-                            break
-                    input('Pressione ENTER para continuar...')
+                resposta = CARGOS.alterar(id_cargo, cargo[0].nome, privilegio)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
         elif opcao == 4:
             TITULO_PRINCIPAL[5] = 'Exclusão de cargo'
             cabecalho()
@@ -417,6 +382,167 @@ def view_menu_gerenciar_cargos() -> None:
             input('Pressione ENTER para continuar...')
         elif opcao == 5:
             resposta = CARGOS.recuperar_apagados()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
+            break
+
+
+def view_menu_gerenciar_categorias():
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Categorias'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_CATEGORIAS)
+        opcao = pnb.ler_inteiro('O que deseja fazer?: ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar nova categoria'
+            cabecalho()
+            nome = input('Nome: ').upper()
+            descricao = input('Descrição: ').upper()
+            resposta = CATEGORIAS.cadastrar(nome, descricao)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar por...'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('Escolha o tipo de consulta: ')
+            if opc == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar por ID'
+                cabecalho()
+                id_categoria = pnb.ler_inteiro('ID: ')
+                categoria = CATEGORIAS.buscar(id=id_categoria)
+                if len(categoria) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {categoria[0].id}',
+                        f'Nome: {categoria[0].nome}',
+                        f'Descrição: {categoria[0].descricao}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 2:
+                TITULO_PRINCIPAL[5] = 'Consultar por nome'
+                cabecalho()
+                nome = input('Nome: ').upper()
+                categoria = CATEGORIAS.buscar(nome=nome)
+                if len(categoria) == 0:
+                    put.titulo('Nome não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {categoria[0].id}',
+                        f'Nome: {categoria[0].nome}',
+                        f'Descrição: {categoria[0].descricao}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 3:
+                TITULO_PRINCIPAL[5] = 'Exibe todas as categorias'
+                cabecalho()
+                categorias = CATEGORIAS.buscar()
+                if len(categorias) == 0:
+                    put.titulo('Nenhuma categoria cadastrada!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                for categoria in categorias:
+                    put.titulo_ml(
+                        [
+                            f'ID: {categoria.id}',
+                            f'Nome: {categoria.nome}',
+                            f'Descrição: {categoria.descricao}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            elif opc == 4:
+                break
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Alterar categoria'
+            cabecalho()
+            id_categoria = pnb.ler_inteiro('ID: ')
+            categoria = CATEGORIAS.buscar(id=id_categoria)
+            if len(categoria) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {categoria[0].id}',
+                    f'Nome: {categoria[0].nome}',
+                    f'Descrição: {categoria[0].descricao}'
+                ]
+            )
+            put.cria_menu(
+                [
+                    'Nome',
+                    'Descrição'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja alterar?: ')
+            TITULO_PRINCIPAL[5] = 'Alterar nome' if opc == 1 \
+                else 'Alterar descrição'
+            nome = input('Nome: ').upper(
+            ) if opc == 1 else categoria[0].nome
+            descricao = input('Descrição: ').upper(
+            ) if opc == 2 else categoria[0].descricao
+            resposta = CATEGORIAS.alterar(id_categoria, nome, descricao)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Excluir categoria'
+            cabecalho()
+            id_categoria = pnb.ler_inteiro('ID: ')
+            categoria = CATEGORIAS.buscar(id=id_categoria)
+            if len(categoria) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {categoria[0].id}',
+                    f'Nome: {categoria[0].nome}',
+                    f'Descrição: {categoria[0].descricao}'
+                ]
+            )
+            resposta = CATEGORIAS.excluir(id_categoria)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            TITULO_PRINCIPAL[5] = 'Recupara excluído'
+            cabecalho()
+            resposta = CATEGORIAS.recuperar_apagadas()
             put.titulo(resposta[1])
             if resposta[0] != 0:
                 if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
@@ -460,7 +586,7 @@ while True:
     if opcao == 1:
         view_menu_administrativo(funcionario_atual.id)
     if opcao == 2:
-        view_menu_operacional(funcionario_atual.id)
+        view_menu_operacional()
     if opcao == 3:
         funcionario_atual = login()
     if opcao == 4:

@@ -29,29 +29,29 @@ class CategoriasController:
         return listas
 
     @classmethod
-    def cadastrar(cls, nome, descricao, visivel=1) -> str:
+    def cadastrar(cls, nome, descricao, visivel=1) -> tuple:
         if not cls.valida_entrada_dados(nome, descricao):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = CategoriasDal.gera_id()
         categoria = Categorias(id, nome, descricao, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'Categoria já cadastrada'
+            return 1, 'Categoria já cadastrada'
         elif CategoriasDal.salvar(categoria, 'a'):
-            return f'Categoria {nome} cadastrada com sucesso!'
+            return 0, f'Categoria {nome} cadastrada com sucesso!'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
     def alterar(cls, id: int, novo_nome: str, nova_descricao: str, visivel=1,
-                tudo=False) -> str:
+                tudo=False) -> tuple:
         if not cls.valida_entrada_dados(novo_nome, nova_descricao):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         categoria = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(categoria) > 0 and categoria[0].id != id:
-            return f'{novo_nome} já cadastrada no ID: {categoria[0].id}'
+            return 1, f'{novo_nome} já cadastrada no ID: {categoria[0].id}'
         categoria = cls.buscar(id=id, invisiveis=tudo)
         if len(categoria) == 0:
-            return 'Categoria não encontrada'
+            return 1, 'Categoria não encontrada'
         categoria[0].nome = novo_nome
         categoria[0].descricao = nova_descricao
         categoria[0].visivel = visivel
@@ -63,26 +63,29 @@ class CategoriasController:
                 if input(f'Confirme a alteração da categoria {cat.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     CategoriasDal.salvar(categoria[0], modo)
-                    retorno = f'Categoria {novo_nome} alterada com sucesso!'
+                    retorno = (
+                        0,
+                        f'Categoria {novo_nome} alterada com sucesso!'
+                    )
                 else:
                     CategoriasDal.salvar(cat, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = (0, 'Operação cancelada')
         return retorno
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         categoria = cls.buscar(id=id)
         if len(categoria) == 0:
-            return 'Categoria não encontrada'
+            return 1, 'Categoria não encontrada'
         return cls.alterar(id, categoria[0].nome, categoria[0].descricao, 0)
 
     @classmethod
-    def recuperar_apagadas(cls) -> str:
+    def recuperar_apagadas(cls) -> tuple:
         categorias = cls.buscar(invisiveis=True)
         categorias = list(filter(lambda c: c.visivel == 0, categorias))
         lista_ids = [c.id for c in categorias]
         if len(categorias) == 0:
-            return 'Não há categorias excluídas'
+            return -1, 'Não há categorias excluídas'
         while True:
             put.titulo('Categorias excluídas:')
             for categoria in categorias:

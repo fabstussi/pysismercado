@@ -72,31 +72,31 @@ class ClientesController:
         return listas
 
     @classmethod
-    def cadastrar(cls, cpf, nome, telefone, sexo, nasc, visivel=1) -> str:
+    def cadastrar(cls, cpf, nome, telefone, sexo, nasc, visivel=1) -> tuple:
         if not cls.valida_entrada_dados(cpf, nome, telefone, sexo, nasc):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = ClientesDal.gera_id()
         cliente = Clientes(id, cpf, nome, telefone, sexo, nasc, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'cliente já cadastrado'
+            return 1, 'cliente já cadastrado'
         elif ClientesDal.salvar(cliente, 'a'):
-            return f'cliente {nome} cadastrado com sucesso!'
+            return 0, f'cliente {nome} cadastrado com sucesso!'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
     def alterar(cls, id: int, novo_cpf: str, novo_nome: str,
                 novo_telefone: str, novo_sexo: str, novo_nasc, visivel=1,
-                tudo=False) -> str:
+                tudo=False) -> tuple:
         if not cls.valida_entrada_dados(novo_cpf, novo_nome, novo_telefone,
                                         novo_sexo, novo_nasc):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         cliente = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(cliente) > 0 and cliente[0].id != id:
-            return f'{novo_nome} já cadastrado no ID: {cliente[0].id}'
+            return 1, f'{novo_nome} já cadastrado no ID: {cliente[0].id}'
         cliente = cls.buscar(id=id, invisiveis=tudo)
         if len(cliente) == 0:
-            return 'cliente não encontrado'
+            return -1, 'cliente não encontrado'
         cliente[0].cpf = novo_cpf
         cliente[0].nome = novo_nome
         cliente[0].telefone = novo_telefone
@@ -111,28 +111,28 @@ class ClientesController:
                 if input(f'Confirme a alteração do cliente {clie.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     ClientesDal.salvar(cliente[0], modo)
-                    retorno = f'Cliente {novo_nome} alterado com sucesso!'
+                    retorno = 0, f'Cliente {novo_nome} alterado com sucesso!'
                 else:
                     ClientesDal.salvar(clie, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = 0, 'Operação cancelada'
         return retorno
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         cliente = cls.buscar(id=id)
         if len(cliente) == 0:
-            return 'Cliente não encontrado'
+            return 1, 'Cliente não encontrado'
         return cls.alterar(id, cliente[0].cpf, cliente[0].nome,
                            cliente[0].telefone, cliente[0].sexo,
                            cliente[0].ano_nasc, 0)
 
     @classmethod
-    def recuperar_apagadas(cls) -> str:
+    def recuperar_apagadas(cls) -> tuple:
         Clientes = cls.buscar(invisiveis=True)
         Clientes = list(filter(lambda c: c.visivel == 0, Clientes))
         lista_ids = [c.id for c in Clientes]
         if len(Clientes) == 0:
-            return 'Não há Clientes excluídos'
+            return 1, 'Não há Clientes excluídos'
         while True:
             put.titulo('Clientes excluídos:')
             for cliente in Clientes:

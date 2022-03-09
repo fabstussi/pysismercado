@@ -28,7 +28,6 @@ class FornecedoresController:
                     peso = 10
             digito = (11 - soma % 11 if soma % 11 > 1 else 0)
             if digito != int(cnpj[12 + i]):
-                print(f'Digito {digito} != {cnpj[12 + i]}')
                 return False
         if nome == '' or len(nome) <= 3:
             return False

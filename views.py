@@ -166,7 +166,7 @@ def criar_usuario_inicial() -> bool:
     return True
 
 
-def login():
+def login() -> None:
     TITULO_PRINCIPAL[5] = 'Login'
     cabecalho()
     put.titulo('Identifique-se com o número de identificação')
@@ -393,7 +393,7 @@ def view_menu_gerenciar_cargos() -> None:
             break
 
 
-def view_menu_gerenciar_categorias():
+def view_menu_gerenciar_categorias() -> None:
     while True:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
             'Gerenciar -> Categorias'
@@ -554,7 +554,7 @@ def view_menu_gerenciar_categorias():
             break
 
 
-def view_menu_gerenciar_clientes():
+def view_menu_gerenciar_clientes() -> None:
     while True:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
             'Gerenciar -> Clientes'

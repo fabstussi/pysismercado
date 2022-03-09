@@ -12,7 +12,7 @@ class ClientesDal:
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
             return [Clientes(int(linha[0]), linha[1], linha[2], linha[3],
-                             linha[4], linha[5], int(linha[6])
+                             linha[4], int(linha[5]), int(linha[6])
                              ) for linha in linhas]
         except FileNotFoundError:
             return []

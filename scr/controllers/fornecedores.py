@@ -28,6 +28,7 @@ class FornecedoresController:
                     peso = 10
             digito = (11 - soma % 11 if soma % 11 > 1 else 0)
             if digito != int(cnpj[12 + i]):
+                print(f'Digito {digito} != {cnpj[12 + i]}')
                 return False
         if nome == '' or len(nome) <= 3:
             return False
@@ -73,32 +74,32 @@ class FornecedoresController:
         return listas
 
     @classmethod
-    def cadastrar(cls, cnpj, nome, telefone, categoria, visivel=1) -> str:
+    def cadastrar(cls, cnpj, nome, telefone, categoria, visivel=1) -> tuple:
         if not cls.valida_entrada_dados(cnpj, nome, telefone, categoria):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = FornecedoresDal.gera_id()
         fornecedor = Fornecedores(
             id, cnpj, nome, telefone, categoria, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'fornecedor já cadastrado'
+            return 1, 'fornecedor já cadastrado'
         elif FornecedoresDal.salvar(fornecedor, 'a'):
-            return f'fornecedor {nome} cadastrado com sucesso!'
+            return 0, f'fornecedor {nome} cadastrado com sucesso!'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
     def alterar(cls, id: int, novo_cnpj: str, novo_nome: str,
                 novo_telefone: str, nova_categoria: str, visivel=1, tudo=False
-                ) -> str:
+                ) -> tuple:
         if not cls.valida_entrada_dados(novo_cnpj, novo_nome, novo_telefone,
                                         nova_categoria):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         fornecedor = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(fornecedor) > 0 and fornecedor[0].id != id:
-            return f'{novo_nome} já cadastrado no ID: {fornecedor[0].id}'
+            return 1, f'{novo_nome} já cadastrado no ID: {fornecedor[0].id}'
         fornecedor = cls.buscar(id=id, invisiveis=tudo)
         if len(fornecedor) == 0:
-            return 'Fornecedor não encontrado'
+            return -2, 'Fornecedor não encontrado'
         fornecedor[0].cnpj = novo_cnpj
         fornecedor[0].nome = novo_nome
         fornecedor[0].telefone = novo_telefone
@@ -112,28 +113,28 @@ class FornecedoresController:
                 if input(f'Confirme a alteração do fornecedor {func.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     FornecedoresDal.salvar(fornecedor[0], modo)
-                    retorno = f'fornecedor {novo_nome} alterado com sucesso!'
+                    retorno = 0, f'fornecedor {novo_nome} alterado com sucesso!'
                 else:
                     FornecedoresDal.salvar(func, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = 1, 'Operação cancelada'
         return retorno
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         fornecedor = cls.buscar(id=id)
         if len(fornecedor) == 0:
-            return 'Fornecedor não encontrado'
+            return -1, 'Fornecedor não encontrado'
         return cls.alterar(id, fornecedor[0].cnpj, fornecedor[0].nome,
                            fornecedor[0].telefone, fornecedor[0].categoria,
                            visivel=0)
 
     @classmethod
-    def recuperar_apagadas(cls) -> str:
+    def recuperar_apagadas(cls) -> tuple:
         fornecedores = cls.buscar(invisiveis=True)
         fornecedores = list(filter(lambda c: c.visivel == 0, fornecedores))
         lista_ids = [c.id for c in fornecedores]
         if len(fornecedores) == 0:
-            return 'Não há fornecedors excluídos'
+            return -1, 'Não há fornecedors excluídos'
         while True:
             put.titulo('fornecedors excluídos:')
             for fornecedor in fornecedores:

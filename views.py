@@ -211,7 +211,7 @@ def view_menu_gerenciamento() -> None:
         elif opcao == 2:
             view_menu_gerenciar_categorias()
         elif opcao == 3:
-            pass
+            view_menu_gerenciar_clientes()
         elif opcao == 4:
             pass
         elif opcao == 5:
@@ -543,6 +543,194 @@ def view_menu_gerenciar_categorias():
             TITULO_PRINCIPAL[5] = 'Recupara excluído'
             cabecalho()
             resposta = CATEGORIAS.recuperar_apagadas()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
+            break
+
+
+def view_menu_gerenciar_clientes():
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Clientes'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_CLIENTES)
+        opcao = pnb.ler_inteiro('O que deseja fazer?: ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar novo cliente'
+            cabecalho()
+            cpf = gera.gerar_cpf()
+            nome = input('Nome: ').upper()
+            telefone = gera.gerar_telefone(ddd=True, celular=True)
+            sexo = input('Sexo: ')[0].upper()
+            ano = pnb.ler_inteiro('Ano de nascimento: ')
+            resposta = CLIENTES.cadastrar(cpf, nome, telefone, sexo, ano)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar clientes cadastrados'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos'
+                ]
+            )
+            opc = pnb.ler_inteiro('Qual a consulta: ')
+            if opc == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar cliente por ID'
+                cabecalho()
+                id_cliente = pnb.ler_inteiro('ID: ')
+                cliente = CLIENTES.buscar(id=id_cliente)
+                if len(cliente) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {cliente[0].id}',
+                        f'Nome: {cliente[0].nome}',
+                        f'CPF: {cliente[0].cpf}',
+                        f'Telefone: {cliente[0].telefone}',
+                        f'Sexo: {cliente[0].sexo}',
+                        f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 2:
+                TITULO_PRINCIPAL[5] = 'Consultar cliente por nome'
+                cabecalho()
+                nome = input('Nome: ').upper()
+                cliente = CLIENTES.buscar(nome=nome)
+                if len(cliente) == 0:
+                    put.titulo('Nome não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {cliente[0].id}',
+                        f'Nome: {cliente[0].nome}',
+                        f'CPF: {cliente[0].cpf}',
+                        f'Telefone: {cliente[0].telefone}',
+                        f'Sexo: {cliente[0].sexo}',
+                        f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                    ]
+                )
+                if input('Deseja consultar outro cliente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            elif opc == 3:
+                TITULO_PRINCIPAL[5] = 'Exibir todos os clientes'
+                cabecalho()
+                clientes = CLIENTES.buscar()
+                if len(clientes) == 0:
+                    put.titulo('Não há clientes cadastrados!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                for cliente in clientes:
+                    put.titulo_ml(
+                        [
+                            f'ID: {cliente.id}',
+                            f'Nome: {cliente.nome}',
+                            f'CPF: {cliente.cpf}',
+                            f'Telefone: {cliente.telefone}',
+                            f'Sexo: {cliente.sexo}',
+                            f'Idade: {int(pnb.pega_data()[6:]) - cliente.ano_nasc} anos'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Alterar dados de um cliente'
+            cabecalho()
+            id_cliente = pnb.ler_inteiro('ID do cliente: ')
+            cliente = CLIENTES.buscar(id=id_cliente)
+            if len(cliente) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {cliente[0].id}',
+                    f'CPF: {cliente[0].cpf}',
+                    f'Nome: {cliente[0].nome}',
+                    f'Telefone: {cliente[0].telefone}',
+                    f'Sexo: {cliente[0].sexo}',
+                    f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                ]
+            )
+            put.cria_menu(
+                [
+                    'Nome',
+                    'Telefone',
+                    'Sexo',
+                    'Ano de nascimento',
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja alterar? ')
+            nome = input('Nome: ').upper(
+            ) if opc == 1 else cliente[0].nome
+            telefone = input('Telefone: ') if opc == 2 else cliente[0].telefone
+            sexo = input('Sexo: ')[0].upper() if opc == 3 else cliente[0].sexo
+            ano = pnb.ler_inteiro(
+                'Ano de nascimento: ') if opc == 4 else cliente[0].ano_nasc
+            resposta = CLIENTES.alterar(
+                id_cliente,
+                cliente[0].cpf,
+                nome,
+                telefone,
+                sexo,
+                ano
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Excluir cliente'
+            cabecalho()
+            id_cliente = pnb.ler_inteiro('ID do cliente: ')
+            cliente = CLIENTES.buscar(id=id_cliente)
+            if len(cliente) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {cliente[0].id}',
+                    f'CPF: {cliente[0].cpf}',
+                    f'Nome: {cliente[0].nome}',
+                    f'Telefone: {cliente[0].telefone}',
+                    f'Sexo: {cliente[0].sexo}',
+                    f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc}'
+                ]
+            )
+            resposta = CLIENTES.excluir(id_cliente)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            TITULO_PRINCIPAL[5] = 'Recuperar excluidos'
+            cabecalho()
+            resposta = CLIENTES.recuperar_apagadas()
             put.titulo(resposta[1])
             if resposta[0] != 0:
                 if input('Deseja tentar novamente? (S/N) ').upper() == 'S':

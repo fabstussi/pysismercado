@@ -213,7 +213,7 @@ def view_menu_gerenciamento() -> None:
         elif opcao == 3:
             view_menu_gerenciar_clientes()
         elif opcao == 4:
-            pass
+            viwe_menu_gerenciar_fornecedores()
         elif opcao == 5:
             pass
         elif opcao == 6:
@@ -584,7 +584,8 @@ def view_menu_gerenciar_clientes() -> None:
                 [
                     'ID',
                     'Nome',
-                    'Exibir todos'
+                    'Exibir todos',
+                    'Voltar'
                 ]
             )
             opc = pnb.ler_inteiro('Qual a consulta: ')
@@ -651,6 +652,8 @@ def view_menu_gerenciar_clientes() -> None:
                         ]
                     )
                 input('Pressione ENTER para continuar...')
+            elif opc == 4:
+                break
         elif opcao == 3:
             TITULO_PRINCIPAL[5] = 'Alterar dados de um cliente'
             cabecalho()
@@ -731,6 +734,206 @@ def view_menu_gerenciar_clientes() -> None:
             TITULO_PRINCIPAL[5] = 'Recuperar excluidos'
             cabecalho()
             resposta = CLIENTES.recuperar_apagadas()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
+            break
+
+
+def viwe_menu_gerenciar_fornecedores() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Fornecedores'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_FORNECEDORES)
+        opcao = pnb.ler_inteiro('O que deseja fazer: ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar fornecedor'
+            cabecalho()
+            cnpj = gera.gerar_cnpj(mascara=True)
+            print(f'CNPJ: {cnpj}')
+            nome = input('Nome: ').upper()
+            telefone = gera.gerar_telefone(ddd=True)
+            print(f'Telefone: {telefone}')
+            while True:
+                categorias = [f'ID: {categoria.id} - {categoria.nome}'
+                              for categoria in CATEGORIAS.buscar()]
+                put.titulo_ml(categorias)
+                id_categoria = pnb.ler_inteiro('ID da categoria: ')
+                if len(CATEGORIAS.buscar(id=id_categoria)) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                categoria = CATEGORIAS.buscar(id=id_categoria)[0].nome
+                break
+            resposta = FORNECEDORES.cadastrar(
+                cnpj, nome, telefone, categoria
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar fornecedor'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja consultar? ')
+            if opc == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar fornecedor por ID'
+                cabecalho()
+                id_fornecedor = pnb.ler_inteiro('ID do fornecedor: ')
+                fornecedor = FORNECEDORES.buscar(id=id_fornecedor)
+                if len(fornecedor) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {fornecedor[0].id}',
+                        f'CNPJ: {fornecedor[0].cnpj}',
+                        f'Nome: {fornecedor[0].nome}',
+                        f'Telefone: {fornecedor[0].telefone}',
+                        f'Categoria: {fornecedor[0].categoria}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 2:
+                TITULO_PRINCIPAL[5] = 'Consultar fornecedor por nome'
+                cabecalho()
+                nome = input('Nome: ').upper()
+                fornecedor = FORNECEDORES.buscar(nome=nome)
+                if len(fornecedor) == 0:
+                    put.titulo('Nome não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {fornecedor[0].id}',
+                        f'CNPJ: {fornecedor[0].cnpj}',
+                        f'Nome: {fornecedor[0].nome}',
+                        f'Telefone: {fornecedor[0].telefone}',
+                        f'Categoria: {fornecedor[0].categoria}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 3:
+                TITULO_PRINCIPAL[5] = 'Exibindo todos os fornecedores'
+                cabecalho()
+                fornecedores = FORNECEDORES.buscar()
+                if len(fornecedores) == 0:
+                    put.titulo('Não há fornecedores cadastrados!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                for fornecedor in fornecedores:
+                    put.titulo_ml(
+                        [
+                            f'ID: {fornecedor.id}',
+                            f'CNPJ: {fornecedor.cnpj}',
+                            f'Nome: {fornecedor.nome}',
+                            f'Telefone: {fornecedor.telefone}',
+                            f'Categoria: {fornecedor.categoria}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            elif opc == 4:
+                break
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Alterar fornecedor'
+            cabecalho()
+            id_fornecedor = pnb.ler_inteiro('ID do fornecedor: ')
+            fornecedor = FORNECEDORES.buscar(id=id_fornecedor)
+            if len(fornecedor) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {fornecedor[0].id}',
+                    f'CNPJ: {fornecedor[0].cnpj}',
+                    f'Nome: {fornecedor[0].nome}',
+                    f'Telefone: {fornecedor[0].telefone}',
+                    f'Categoria: {fornecedor[0].categoria}'
+                ]
+            )
+            put.cria_menu(
+                [
+                    'Nome',
+                    'Telefone',
+                    'Categoria',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja alterar? ')
+            nome = input('Nome: ').upper() if opc == 1 else fornecedor[0].nome
+            telefone = gera.gerar_telefone(ddd=True) if opc == 2 else \
+                fornecedor[0].telefone
+            if opc == 3:
+                while True:
+                    categorias = [f'ID: {categoria.id} - {categoria.nome}'
+                                  for categoria in CATEGORIAS.buscar()]
+                    put.titulo_ml(categorias)
+                    id_categoria = pnb.ler_inteiro('ID da categoria: ')
+                    categoria = CATEGORIAS.buscar(id=id_categoria)[0].nome
+                    break
+            else:
+                categoria = fornecedor[0].categoria
+            resposta = FORNECEDORES.alterar(
+                id_fornecedor, fornecedor[0].cnpj, nome, telefone, categoria
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+            if opc == 4:
+                break
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Excluir fornecedor'
+            cabecalho()
+            id_fornecedor = pnb.ler_inteiro('ID do fornecedor: ')
+            fornecedor = FORNECEDORES.buscar(id=id_fornecedor)
+            if len(fornecedor) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {fornecedor[0].id}',
+                    f'CNPJ: {fornecedor[0].cnpj}',
+                    f'Nome: {fornecedor[0].nome}',
+                    f'Telefone: {fornecedor[0].telefone}',
+                    f'Categoria: {fornecedor[0].categoria}'
+                ]
+            )
+            resposta = FORNECEDORES.excluir(id_fornecedor)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            TITULO_PRINCIPAL[5] = 'Recuperar excluido'
+            cabecalho()
+            resposta = FORNECEDORES.recuperar_apagadas()
             put.titulo(resposta[1])
             if resposta[0] != 0:
                 if input('Deseja tentar novamente? (S/N) ').upper() == 'S':

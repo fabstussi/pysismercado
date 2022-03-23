@@ -12,8 +12,8 @@ class FuncionariosDal:
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
             return [Funcionarios(int(linha[0]), linha[1], linha[2], linha[3],
-                                 linha[4], linha[5], linha[6], int(linha[7])
-                                 ) for linha in linhas]
+                                 linha[4], int(linha[5]), linha[6],
+                                 int(linha[7])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:

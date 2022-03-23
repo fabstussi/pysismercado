@@ -28,9 +28,9 @@ class CargosController:
         return listas
 
     @classmethod
-    def autorizacao(cls, id: int, privilegio_necessario: str) -> bool:
-        cargo = cls.buscar(id=id)
-        return cargo[0].privilegio == privilegio_necessario
+    def autorizacao(cls, cargo_fun: str, privilegio_necessario: int) -> bool:
+        cargo = cls.buscar(nome=cargo_fun)
+        return cargo[0].privilegio <= privilegio_necessario
 
     @classmethod
     def cadastrar(cls, nome, privilegio, visivel=1) -> tuple:

@@ -38,34 +38,34 @@ class ProdutosController:
 
     @classmethod
     def cadastrar(cls, categoria, fornecedor, nome, quantidade, custo, preco,
-                  descricao, visivel=1) -> str:
+                  descricao, visivel=1) -> tuple:
         if not cls.valida_entrada_dados(nome, quantidade, custo, preco,
                                         descricao):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         id = ProdutosDal.gera_id()
         produto = Produtos(
             id, categoria, fornecedor, nome, quantidade, custo, preco,
             descricao, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 'fornecedor já cadastrado'
+            return 1, 'fornecedor já cadastrado'
         elif ProdutosDal.salvar(produto, 'a'):
-            return f'fornecedor {nome} cadastrado com sucesso!'
+            return 0, f'fornecedor {nome} cadastrado com sucesso!'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
     def alterar(cls, id: int, novo_nome: str, nova_quantidade: int,
                 novo_custo: float, novo_preco: float, nova_descricao: str,
-                visivel=1, tudo=False) -> str:
+                visivel=1, tudo=False) -> tuple:
         if not cls.valida_entrada_dados(novo_nome, nova_quantidade, novo_custo,
                                         novo_preco, nova_descricao):
-            return 'Dados inválidos'
+            return -1, 'Dados inválidos'
         produto = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(produto) > 0 and produto[0].id != id:
-            return f'{novo_nome} já cadastrado no ID: {produto[0].id}'
+            return 1, f'{novo_nome} já cadastrado no ID: {produto[0].id}'
         produto = cls.buscar(id=id, invisiveis=tudo)
         if len(produto) == 0:
-            return 'Produto não encontrado'
+            return -1, 'Produto não encontrado'
         produto[0].nome = novo_nome
         produto[0].quantidade = nova_quantidade
         produto[0].custo = novo_custo
@@ -80,10 +80,10 @@ class ProdutosController:
                 if input(f'Confirme a alteração do produto {prod.nome} ' +
                          '(s/n): ')[0].lower() == 's':
                     ProdutosDal.salvar(produto[0], modo)
-                    retorno = f'Produto {novo_nome} alterado com sucesso!'
+                    retorno = 0, f'Produto {novo_nome} alterado com sucesso!'
                 else:
                     ProdutosDal.salvar(prod, modo)
-                    retorno = 'Operação cancelada'
+                    retorno = 0, 'Operação cancelada'
         return retorno
 
     @classmethod
@@ -99,21 +99,21 @@ class ProdutosController:
                     ProdutosDal.salvar(produto[0], modo)
 
     @classmethod
-    def excluir(cls, id: int) -> str:
+    def excluir(cls, id: int) -> tuple:
         produto = cls.buscar(id=id)
         if len(produto) == 0:
-            return 'Produto não encontrado'
+            return -1, 'Produto não encontrado'
         return cls.alterar(id, produto[0].nome, produto[0].quantidade,
                            produto[0].custo, produto[0].preco,
                            produto[0].descricao, visivel=0)
 
     @classmethod
-    def recuperar_apagadas(cls) -> str:
+    def recuperar_apagadas(cls) -> tuple:
         produtos = cls.buscar(invisiveis=True)
         produtos = list(filter(lambda p: p.visivel == 0, produtos))
         lista_ids = [p.id for p in produtos]
         if len(produtos) == 0:
-            return 'Não há produtos excluídos'
+            return -1, 'Não há produtos excluídos'
         while True:
             put.titulo('produtos excluídos:')
             for produto in produtos:

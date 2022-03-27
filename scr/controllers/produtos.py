@@ -47,9 +47,9 @@ class ProdutosController:
             id, categoria, fornecedor, nome, quantidade, custo, preco,
             descricao, visivel)
         if len(cls.buscar(nome=nome)) > 0:
-            return 1, 'fornecedor já cadastrado'
+            return 1, 'Produto já cadastrado'
         elif ProdutosDal.salvar(produto, 'a'):
-            return 0, f'fornecedor {nome} cadastrado com sucesso!'
+            return 0, f'Produto {nome} cadastrado com sucesso!'
         else:
             return -2, 'Erro não foi possível realizar o cadastro'
 

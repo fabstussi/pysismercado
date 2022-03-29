@@ -54,18 +54,21 @@ class ProdutosController:
             return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
-    def alterar(cls, id: int, novo_nome: str, nova_quantidade: int,
-                novo_custo: float, novo_preco: float, nova_descricao: str,
-                visivel=1, tudo=False) -> tuple:
+    def alterar(cls, id_prod: int, nova_cat: str, novo_fornecedor: str,
+                novo_nome: str, nova_quantidade: int, novo_custo: float,
+                novo_preco: float, nova_descricao: str, visivel=1, tudo=False
+                ) -> tuple:
         if not cls.valida_entrada_dados(novo_nome, nova_quantidade, novo_custo,
                                         novo_preco, nova_descricao):
             return -1, 'Dados inválidos'
         produto = cls.buscar(nome=novo_nome, invisiveis=tudo)
-        if len(produto) > 0 and produto[0].id != id:
+        if len(produto) > 0 and produto[0].id != id_prod:
             return 1, f'{novo_nome} já cadastrado no ID: {produto[0].id}'
-        produto = cls.buscar(id=id, invisiveis=tudo)
+        produto = cls.buscar(id=id_prod, invisiveis=tudo)
         if len(produto) == 0:
             return -1, 'Produto não encontrado'
+        produto[0].categoria = nova_cat
+        produto[0].fornecedor = novo_fornecedor
         produto[0].nome = novo_nome
         produto[0].quantidade = nova_quantidade
         produto[0].custo = novo_custo

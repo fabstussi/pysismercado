@@ -39,7 +39,6 @@ MENU_ADMINISTRATIVO = [
 ]
 MENU_OPERACIONAL = [
     'Vendas',
-    'Clientes',
     'Consultas',
     'Retornar'
 ]
@@ -166,7 +165,7 @@ def criar_usuario_inicial() -> bool:
     return True
 
 
-def login() -> None:
+def login():
     TITULO_PRINCIPAL[5] = 'Login'
     cabecalho()
     put.titulo('Identifique-se com o número de identificação')
@@ -179,24 +178,20 @@ def login() -> None:
         return FUNCIONARIOS.buscar(id=id)[0]
 
 
-def view_menu_administrativo(id_funcionario: int) -> None:
-    if CARGOS.autorizacao(id_funcionario, 0) or \
-            CARGOS.autorizacao(id_funcionario, 1):
-        while True:
-            TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo'
-            cabecalho()
-            put.cria_menu(MENU_ADMINISTRATIVO)
-            opcao = pnb.ler_inteiro('Escolha uma opção: ')
-            if opcao == 1:
-                view_menu_gerenciamento()
-            elif opcao == 1:
-                pass
-            elif opcao == 1:
-                pass
-            elif opcao == 4:
-                break
-    else:
-        put.titulo('Acesso negado, privilégio insuficiente!')
+def view_menu_administrativo() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo'
+        cabecalho()
+        put.cria_menu(MENU_ADMINISTRATIVO)
+        opcao = pnb.ler_inteiro('Escolha uma opção: ')
+        if opcao == 1:
+            view_menu_gerenciamento()
+        elif opcao == 1:
+            pass
+        elif opcao == 1:
+            pass
+        elif opcao == 4:
+            break
 
 
 def view_menu_gerenciamento() -> None:
@@ -215,9 +210,9 @@ def view_menu_gerenciamento() -> None:
         elif opcao == 4:
             viwe_menu_gerenciar_fornecedores()
         elif opcao == 5:
-            pass
+            view_menu_gerenciar_funcionarios()
         elif opcao == 6:
-            pass
+            view_menu_gerenciar_produtos()
         elif opcao == 7:
             break
 
@@ -888,6 +883,11 @@ def viwe_menu_gerenciar_fornecedores() -> None:
                                   for categoria in CATEGORIAS.buscar()]
                     put.titulo_ml(categorias)
                     id_categoria = pnb.ler_inteiro('ID da categoria: ')
+                    if len(CATEGORIAS.buscar(id=id_categoria)) == 0:
+                        put.titulo('ID não encontrado!')
+                        input('Pressione ENTER para continuar...')
+                        cabecalho()
+                        continue
                     categoria = CATEGORIAS.buscar(id=id_categoria)[0].nome
                     break
             else:
@@ -945,6 +945,496 @@ def viwe_menu_gerenciar_fornecedores() -> None:
             break
 
 
+def view_menu_gerenciar_funcionarios():
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Funcionários'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_FUNCIONARIOS)
+        opcao = pnb.ler_inteiro('O que deseja fazer: ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar novo funcionário'
+            cabecalho()
+            cpf = gera.gerar_cpf()
+            nome = input('Nome: ').upper()
+            telefone = gera.gerar_telefone(ddd=True)
+            sexo = input('Sexo: ')[0].upper()
+            ano = pnb.ler_inteiro('Ano de nascimento: ')
+            while True:
+                cargos = [f'ID: {cargo.id} - {cargo.nome}'
+                          for cargo in CARGOS.buscar()]
+                put.titulo_ml(cargos)
+                id_cargo = pnb.ler_inteiro('ID do cargo: ')
+                if len(CARGOS.buscar(id=id_cargo)) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                cargo = CARGOS.buscar(id=id_cargo)[0].nome
+                break
+            resposta = FUNCIONARIOS.cadastrar(cpf, nome, telefone, sexo, ano,
+                                              cargo)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? (S/N) ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar funcionário'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja consultar? ')
+            if opc == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar funcionário por ID'
+                cabecalho()
+                id_funcionario = pnb.ler_inteiro('ID do funcionário: ')
+                funcionario = FUNCIONARIOS.buscar(id=id_funcionario)
+                if len(funcionario) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {funcionario[0].id}',
+                        f'CPF: {funcionario[0].cpf}',
+                        f'Nome: {funcionario[0].nome}',
+                        f'Telefone: {funcionario[0].telefone}',
+                        f'Sexo: {funcionario[0].sexo}',
+                        f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                        f'Cargo: {funcionario[0].cargo}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 2:
+                TITULO_PRINCIPAL[5] = 'Consultar funcionário por nome'
+                cabecalho()
+                nome = input('Nome: ').upper()
+                funcionario = FUNCIONARIOS.buscar(nome=nome)
+                if len(funcionario) == 0:
+                    put.titulo('Nome não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {funcionario[0].id}',
+                        f'CPF: {funcionario[0].cpf}',
+                        f'Nome: {funcionario[0].nome}',
+                        f'Telefone: {funcionario[0].telefone}',
+                        f'Sexo: {funcionario[0].sexo}',
+                        f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                        f'Cargo: {funcionario[0].cargo}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 3:
+                TITULO_PRINCIPAL[5] = 'Consultar todos os funcionários'
+                cabecalho()
+                funcionarios = FUNCIONARIOS.buscar()
+                if len(funcionarios) == 0:
+                    put.titulo('Nenhum funcionário cadastrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                for funcionario in funcionarios:
+                    put.titulo_ml(
+                        [
+                            f'ID: {funcionario.id}',
+                            f'CPF: {funcionario.cpf}',
+                            f'Nome: {funcionario.nome}',
+                            f'Telefone: {funcionario.telefone}',
+                            f'Sexo: {funcionario.sexo}',
+                            f'Idade: {int(pnb.pega_data()[6:]) - funcionario.ano_nasc} anos',
+                            f'Cargo: {funcionario.cargo}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+            elif opc == 4:
+                break
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Alterar dados do funcionário'
+            cabecalho()
+            id_funcionario = pnb.ler_inteiro('ID do funcionário: ')
+            funcionario = FUNCIONARIOS.buscar(id=id_funcionario)
+            if len(funcionario) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {funcionario[0].id}',
+                    f'CPF: {funcionario[0].cpf}',
+                    f'Nome: {funcionario[0].nome}',
+                    f'Telefone: {funcionario[0].telefone}',
+                    f'Sexo: {funcionario[0].sexo}',
+                    f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                    f'Cargo: {funcionario[0].cargo}'
+                ]
+            )
+            put.cria_menu(
+                [
+                    'Nome',
+                    'Telefone',
+                    'Sexo',
+                    'Ano de nascimento',
+                    'Cargo'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja alterar? ')
+            nome = input('Nome: ').upper(
+            ) if opc == 1 else funcionario[0].nome
+            telefone = input('Telefone: ').upper(
+            ) if opc == 2 else funcionario[0].telefone
+            sexo = input('Sexo: ')[0].upper(
+            ) if opc == 3 else funcionario[0].sexo
+            ano = pnb.ler_inteiro(
+                'Ano de nascimento: '
+            ) if opc == 4 else funcionario[0].ano_nasc
+            cargo = funcionario[0].cargo
+            if opc == 5:
+                while True:
+                    cargos = [f'ID: {cargo.id} - Nome: {cargo.nome}'
+                              for cargo in CARGOS.buscar()]
+                    put.cria_menu(cargos)
+                    id_cargo = pnb.ler_inteiro('ID do cargo: ')
+                    if len(CARGOS.buscar(id=id_cargo)) == 0:
+                        put.titulo('ID não encontrado!')
+                        cabecalho()
+                        continue
+                    cargo = CARGOS.buscar(id=id_cargo)[0].nome
+                    break
+            resposta = FUNCIONARIOS.alterar(
+                id_funcionario,
+                funcionario[0].cpf,
+                nome,
+                telefone,
+                sexo,
+                ano,
+                cargo
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Excluir funcionário'
+            cabecalho()
+            id_funcionario = pnb.ler_inteiro('ID do funcionário: ')
+            funcionario = FUNCIONARIOS.buscar(id=id_funcionario)
+            if len(funcionario) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {funcionario[0].id}',
+                    f'CPF: {funcionario[0].cpf}',
+                    f'Nome: {funcionario[0].nome}',
+                    f'Telefone: {funcionario[0].telefone}',
+                    f'Sexo: {funcionario[0].sexo}',
+                    f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                    f'Cargo: {funcionario[0].cargo}'
+                ]
+            )
+            resposta = FUNCIONARIOS.excluir(id_funcionario)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            TITULO_PRINCIPAL[5] = 'Recuperar excluidos'
+            cabecalho()
+            resposta = FUNCIONARIOS.recuperar_apagadas()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
+            break
+
+
+def view_menu_gerenciar_produtos():
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
+            'Gerenciar -> Produtos'
+        cabecalho()
+        put.cria_menu(MENU_GERENCIAR_PRODUTOS)
+        opcao = pnb.ler_inteiro('O que deseja fazer? ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Cadastrar novo produto'
+            cabecalho()
+            while True:
+                categorias = [f'ID: {categoria.id} - Nome: {categoria.nome}'
+                              for categoria in CATEGORIAS.buscar()]
+                put.titulo_ml(categorias)
+                id_categoria = pnb.ler_inteiro('ID da categoria: ')
+                if len(CATEGORIAS.buscar(id=id_categoria)) == 0:
+                    put.titulo('ID não encontrado!')
+                    cabecalho()
+                    continue
+                categoria = CATEGORIAS.buscar(id=id_categoria)[0].nome
+                break
+            while True:
+                fornecedores = []
+                for fornecedor in FORNECEDORES.buscar():
+                    if fornecedor.categoria == categoria:
+                        fornecedores.append(
+                            f'ID: {fornecedor.id} - Nome: {fornecedor.nome}'
+                        )
+                put.titulo_ml(fornecedores)
+                id_fornecedor = pnb.ler_inteiro('ID do fornecedor: ')
+                if len(FORNECEDORES.buscar(id=id_fornecedor)) == 0:
+                    put.titulo('ID não encontrado!')
+                    cabecalho()
+                    continue
+                fornecedor = FORNECEDORES.buscar(id=id_fornecedor)[0].nome
+                break
+            nome = input('Nome: ').upper()
+            quantidade = pnb.ler_inteiro('Quantidade: ')
+            custo = pnb.ler_real('Custo: R$ ')
+            preco = pnb.ler_real('Preço: R$ ')
+            descricao = input('Descrição: ').upper()
+            resposta = PRODUTOS.cadastrar(
+                categoria,
+                fornecedor,
+                nome,
+                quantidade,
+                custo,
+                preco,
+                descricao
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Consultar produtos cadastrados'
+            cabecalho()
+            put.cria_menu(
+                [
+                    'ID',
+                    'Nome',
+                    'Exibir todos',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja consultar? ')
+            if opc == 1:
+                TITULO_PRINCIPAL[5] = 'Consultar produtos por ID'
+                cabecalho()
+                id_produto = pnb.ler_inteiro('ID do produto: ')
+                produto = PRODUTOS.buscar(id=id_produto)
+                if len(produto) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {produto[0].id}',
+                        f'Categoria: {produto[0].categoria}',
+                        f'Fornecedor: {produto[0].fornecedor}',
+                        f'Nome: {produto[0].nome}',
+                        f'Quantidade: {produto[0].quantidade}',
+                        f'Custo: R$ {produto[0].custo}',
+                        f'Preço: R$ {produto[0].preco}',
+                        f'Descrição: {produto[0].descricao}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 2:
+                TITULO_PRINCIPAL[5] = 'Cunsultar produtos por nome'
+                cabecalho()
+                nome = input('Nome do produto: ').upper()
+                produtos = PRODUTOS.buscar(nome=nome)
+                if len(produtos) == 0:
+                    put.titulo('Nome não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {produto[0].id}',
+                        f'Categoria: {produto[0].categoria}',
+                        f'Fornecedor: {produto[0].fornecedor}',
+                        f'Nome: {produto[0].nome}',
+                        f'Quantidade: {produto[0].quantidade}',
+                        f'Custo: R$ {produto[0].custo}',
+                        f'Preço: R$ {produto[0].preco}',
+                        f'Descrição: {produto[0].descricao}'
+                    ]
+                )
+                input('Pressione ENTER para continuar...')
+            elif opc == 3:
+                TITULO_PRINCIPAL[5] = 'Consultar todos os produtos'
+                cabecalho()
+                produtos = PRODUTOS.buscar()
+                if len(produtos) == 0:
+                    put.titulo('Nenhum produto cadastrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                for produto in produtos:
+                    put.titulo_ml(
+                        [
+                            f'ID: {produto.id}',
+                            f'Categoria: {produto.categoria}',
+                            f'Fornecedor: {produto.fornecedor}',
+                            f'Nome: {produto.nome}',
+                            f'Quantidade: {produto.quantidade}',
+                            f'Custo: R$ {produto.custo}',
+                            f'Preço: R$ {produto.preco}',
+                            f'Descrição: {produto.descricao}'
+                        ]
+                    )
+                input('Pressione ENTER para continuar...')
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Alterar produtos cadastrados'
+            cabecalho()
+            id_produto = pnb.ler_inteiro('ID do produto: ')
+            produto = PRODUTOS.buscar(id=id_produto)
+            if len(produto) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {produto[0].id}',
+                    f'Categoria: {produto[0].categoria}',
+                    f'Fornecedor: {produto[0].fornecedor}',
+                    f'Nome: {produto[0].nome}',
+                    f'Quantidade: {produto[0].quantidade}',
+                    f'Custo: R$ {produto[0].custo}',
+                    f'Preço: R$ {produto[0].preco}',
+                    f'Descrição: {produto[0].descricao}'
+                ]
+            )
+            put.cria_menu(
+                [
+                    'Alterar categoria',
+                    'Alterar fornecedor',
+                    'Alterar nome',
+                    'Alterar quantidade',
+                    'Alterar custo',
+                    'Alterar preço',
+                    'Alterar descrição',
+                    'Voltar'
+                ]
+            )
+            opc = pnb.ler_inteiro('O que deseja alterar? ')
+            categoria = produto[0].categoria
+            fornecedor = produto[0].fornecedor
+            if opc == 1:
+                while True:
+                    categorias = [
+                        f'ID: {categoria.id} - Nome: {categoria.nome}'
+                        for categoria in CATEGORIAS.buscar()
+                    ]
+                    put.titulo_ml(categorias)
+                    id_categoria = pnb.ler_inteiro('ID da categoria: ')
+                    if len(CATEGORIAS.buscar(id=id_categoria)) == 0:
+                        put.titulo('ID não encontrado!')
+                        input('Pressione ENTER para continuar...')
+                        continue
+                    categoria = CATEGORIAS.buscar(id=id_categoria)[0].nome
+                    break
+            elif opc == 2:
+                while True:
+                    fornecedores = [
+                        f'ID: {fornecedor.id} - Nome: {fornecedor.nome}'
+                        for fornecedor in FORNECEDORES.buscar()
+                    ]
+                    put.titulo_ml(fornecedores)
+                    id_fornecedor = pnb.ler_inteiro('ID do fornecedor: ')
+                    if len(FORNECEDORES.buscar(id=id_fornecedor)) == 0:
+                        put.titulo('ID não encontrado!')
+                        input('Pressione ENTER para continuar...')
+                        continue
+                    fornecedor = FORNECEDORES.buscar(id=id_fornecedor)[0].nome
+                    break
+            nome = input('Nome do produto: ').upper(
+            ) if opc == 3 else produto[0].nome
+            quantidade = pnb.ler_inteiro(
+                'Quantidade: '
+            ) if opc == 4 else produto[0].quantidade
+            custo = pnb.ler_float(
+                'Custo: R$ '
+            ) if opc == 5 else produto[0].custo
+            preco = pnb.ler_float(
+                'Preço: R$ '
+            ) if opc == 6 else produto[0].preco
+            descricao = input('Descrição: ').upper(
+            ) if opc == 7 else produto[0].descricao
+            resposta = PRODUTOS.alterar(
+                id_produto, categoria, fornecedor, nome, quantidade,
+                custo, preco, descricao
+            )
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Excluir produtos cadastrados'
+            cabecalho()
+            id_produto = pnb.ler_inteiro('ID do produto: ')
+            produto = PRODUTOS.buscar(id=id_produto)
+            if len(produto) == 0:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            put.titulo_ml(
+                [
+                    f'ID: {produto[0].id}',
+                    f'Categoria: {produto[0].categoria}',
+                    f'Fornecedor: {produto[0].fornecedor}',
+                    f'Nome: {produto[0].nome}',
+                    f'Quantidade: {produto[0].quantidade}',
+                    f'Custo: R$ {produto[0].custo}',
+                    f'Preço: R$ {produto[0].preco}',
+                    f'Descrição: {produto[0].descricao}'
+                ]
+            )
+            resposta = PRODUTOS.excluir(id_produto)
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            TITULO_PRINCIPAL[5] = 'Recuperar excluidos'
+            cabecalho()
+            resposta = PRODUTOS.recuperar_apagadas()
+            put.titulo(resposta[1])
+            if resposta[0] != 0:
+                if input('Deseja tentar novamente? [S/N]: ').upper() == 'S':
+                    continue
+                else:
+                    break
+            input('Pressione ENTER para continuar...')
+        elif opcao == 6:
+            break
+
+
 def view_menu_operacional() -> None:
     while True:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Operacional'
@@ -953,12 +1443,13 @@ def view_menu_operacional() -> None:
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             pass
-        if opcao == 2:
+        elif opcao == 2:
             pass
-        if opcao == 3:
-            pass
-        if opcao == 4:
+        elif opcao == 3:
             break
+        else:
+            put.titulo('Opção inválida!')
+            input('Pressione ENTER para continuar...')
 
 
 if not criar_usuario_inicial():
@@ -967,15 +1458,19 @@ if not criar_usuario_inicial():
 
 funcionario_atual = login()
 
-TITULO_PRINCIPAL[4] = f'Usurário: {funcionario_atual.nome}'
 
 while True:
+    TITULO_PRINCIPAL[4] = f'Usurário: {funcionario_atual.nome}'
     TITULO_PRINCIPAL[5] = 'MENU: Principal'
     cabecalho()
     put.cria_menu(MENU_PRINCIPAL)
     opcao = pnb.ler_inteiro('Escolha uma opção: ')
     if opcao == 1:
-        view_menu_administrativo(funcionario_atual.id)
+        if CARGOS.autorizacao(funcionario_atual.cargo, 1):
+            view_menu_administrativo()
+        else:
+            put.titulo('Você não tem autorização para acessar esse menu!')
+            input('tecle enter para continuar...')
     if opcao == 2:
         view_menu_operacional()
     if opcao == 3:

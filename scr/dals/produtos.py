@@ -12,8 +12,8 @@ class ProdutosDal:
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
             return [Produtos(int(linha[0]), linha[1], linha[2], linha[3],
-                             int(linha[4]), float(linha[5]), float(linha[6]),
-                             linha[7], int(linha[8])) for linha in linhas]
+                             int(linha[4]), float(linha[5]), (linha[6]),
+                             int(linha[7])) for linha in linhas]
         except FileNotFoundError:
             return []
         except Exception as e:
@@ -26,8 +26,8 @@ class ProdutosDal:
             with open('db/produtos.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(
                     f'{produto.id}|{produto.categoria}|{produto.fornecedor}' +
-                    f'|{produto.nome}|{produto.quantidade}|{produto.custo}|' +
-                    f'{produto.preco}|{produto.descricao}|{produto.visivel}\n')
+                    f'|{produto.nome}|{produto.quantidade}|{produto.preco}|' +
+                    f'{produto.descricao}|{produto.visivel}\n')
             return True
         except Exception:
             return False

@@ -7,7 +7,6 @@ class Produtos:
         self.fornecedor = fornecedor
         self.nome = nome
         self.quantidade = quantidade
-        self.custo = custo
         self.preco = preco
         self.descricao = descricao
         self.visivel = visivel

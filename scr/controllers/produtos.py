@@ -7,45 +7,80 @@ import util.PyUtilTerminal as put
 class ProdutosController:
 
     @staticmethod
-    def valida_entrada_dados(nome: str, quantidade: int, custo: float,
-                             preco: float, descricao: str) -> bool:
+    def valida_entrada_dados(
+            nome: str,
+            quantidade: int,
+            preco: float,
+            descricao: str
+    ) -> bool:
         if nome == '' or len(nome) < 3:
             return False
         if quantidade < 1:
             return False
-        if custo < 0.01:
-            return False
-        if preco < custo:
+        if preco < 0.01:
             return False
         if descricao == '' or len(descricao) < 3:
             return False
         return True
 
     @classmethod
-    def buscar(cls, id=None, nome=None, invisiveis=False) -> list:
+    def buscar(
+        cls,
+        id=None,
+        nome=None,
+        invisiveis=False
+    ) -> list:
         produtos = ProdutosDal()
         if id is not None:
-            listas = list(filter(lambda produto: produto.id == id,
-                                 produtos.listar()))
+            listas = list(
+                filter(
+                    lambda produto: produto.id == id, produtos.listar()
+                )
+            )
         elif nome is not None:
-            listas = list(filter(lambda produto: produto.nome == nome,
-                                 produtos.listar()))
+            listas = list(
+                filter(
+                    lambda produto: produto.nome == nome, produtos.listar()
+                )
+            )
         else:
             listas = produtos.listar()
         if not invisiveis:
-            listas = list(filter(lambda x: x.visivel == 1, listas))
+            listas = list(
+                filter(
+                    lambda x: x.visivel == 1, listas
+                )
+            )
         return listas
 
     @classmethod
-    def cadastrar(cls, categoria, fornecedor, nome, quantidade, custo, preco,
-                  descricao, visivel=1) -> tuple:
-        if not cls.valida_entrada_dados(nome, quantidade, custo, preco,
-                                        descricao):
+    def cadastrar(
+        cls,
+        categoria,
+        fornecedor,
+        nome,
+        quantidade,
+        preco,
+        descricao,
+        visivel=1
+    ) -> tuple:
+        if not cls.valida_entrada_dados(nome,
+                                        quantidade,
+                                        preco,
+                                        descricao
+                                        ):
             return -1, 'Dados inválidos'
         id = ProdutosDal.gera_id()
         produto = Produtos(
-            id, categoria, fornecedor, nome, quantidade, custo, preco,
-            descricao, visivel)
+            id,
+            categoria,
+            fornecedor,
+            nome,
+            quantidade,
+            preco,
+            descricao,
+            visivel
+        )
         if len(cls.buscar(nome=nome)) > 0:
             return 1, 'Produto já cadastrado'
         elif ProdutosDal.salvar(produto, 'a'):
@@ -54,12 +89,22 @@ class ProdutosController:
             return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
-    def alterar(cls, id: int, nova_cat: str, novo_fornecedor: str,
-                novo_nome: str, nova_quantidade: int, novo_custo: float,
-                novo_preco: float, nova_descricao: str, visivel=1, tudo=False
-                ) -> tuple:
-        if not cls.valida_entrada_dados(novo_nome, nova_quantidade, novo_custo,
-                                        novo_preco, nova_descricao):
+    def alterar(
+        cls,
+        id: int,
+        nova_cat: str,
+        novo_fornecedor: str,
+        novo_nome: str,
+        nova_quantidade: int,
+        novo_preco: float,
+        nova_descricao: str,
+        visivel=1,
+        tudo=False
+    ) -> tuple:
+        if not cls.valida_entrada_dados(novo_nome,
+                                        nova_quantidade,
+                                        novo_preco,
+                                        nova_descricao):
             return -1, 'Dados inválidos'
         produto = cls.buscar(nome=novo_nome, invisiveis=tudo)
         if len(produto) > 0 and produto[0].id != id:
@@ -71,7 +116,6 @@ class ProdutosController:
         produto[0].fornecedor = novo_fornecedor
         produto[0].nome = novo_nome
         produto[0].quantidade = nova_quantidade
-        produto[0].custo = novo_custo
         produto[0].preco = novo_preco
         produto[0].descricao = nova_descricao
         produto[0].visivel = visivel
@@ -102,6 +146,17 @@ class ProdutosController:
                     ProdutosDal.salvar(produto[0], modo)
 
     @classmethod
+    def altera_preco(cls, id: int, novo_preco: float):
+        produto = cls.buscar(id=id)
+        produto[0].preco = novo_preco
+        for i, prod in enumerate(cls.buscar(invisiveis=True)):
+            modo = 'w' if i == 0 else 'a'
+            if produto[0].id != prod.id:
+                ProdutosDal.salvar(prod, modo)
+            else:
+                ProdutosDal.salvar(produto[0], modo)
+
+    @classmethod
     def excluir(cls, id: int) -> tuple:
         produto = cls.buscar(id=id)
         if len(produto) == 0:
@@ -112,7 +167,6 @@ class ProdutosController:
             produto[0].fornecedor,
             produto[0].nome,
             produto[0].quantidade,
-            produto[0].custo,
             produto[0].preco,
             produto[0].descricao,
             visivel=0
@@ -143,7 +197,6 @@ class ProdutosController:
             produto[0].fornecedor,
             produto[0].nome,
             produto[0].quantidade,
-            produto[0].custo,
             produto[0].preco,
             produto[0].descricao,
             visivel=1,

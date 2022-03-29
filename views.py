@@ -221,7 +221,7 @@ def view_menu_gerenciar_cargos() -> None:
     while True:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> ' + \
             'Gerenciar -> Cargos'
-        legenda_permissoes = {
+        leg_permissoes = {
             0: 'Administrador',
             1: 'Gerente',
             2: 'Vendedor'
@@ -274,7 +274,7 @@ def view_menu_gerenciar_cargos() -> None:
                     [
                         f'ID: {cargo[0].id}',
                         f'Nome: {cargo[0].nome}',
-                        f'Privilégio: {legenda_permissoes[cargo[0].privilegio]}'
+                        f'Privilégio: {leg_permissoes[cargo[0].privilegio]}'
                     ]
                 )
                 input('Pressione ENTER para continuar...')
@@ -291,7 +291,7 @@ def view_menu_gerenciar_cargos() -> None:
                     [
                         f'ID: {cargo[0].id}',
                         f'Nome: {cargo[0].nome}',
-                        f'Privilégio: {legenda_permissoes[cargo[0].privilegio]}'
+                        f'Privilégio: {leg_permissoes[cargo[0].privilegio]}'
                     ]
                 )
                 input('Pressione ENTER para continuar...')
@@ -307,7 +307,7 @@ def view_menu_gerenciar_cargos() -> None:
                         [
                             f'ID: {cargo.id}',
                             f'Nome: {cargo.nome}',
-                            f'Privilégio: {legenda_permissoes[cargo.privilegio]}'
+                            f'Privilégio: {leg_permissoes[cargo.privilegio]}'
                         ]
                     )
                 input('Pressione ENTER para continuar...')
@@ -362,7 +362,7 @@ def view_menu_gerenciar_cargos() -> None:
                 [
                     f'ID: {cargo[0].id}',
                     f'Nome: {cargo[0].nome}',
-                    f'Permissão: {legenda_permissoes[cargo[0].privilegio]}'
+                    f'Permissão: {leg_permissoes[cargo[0].privilegio]}'
                 ]
             )
             if input('Confirma a exclusão do cargo? (S/N) ').upper() == 'S':
@@ -593,6 +593,7 @@ def view_menu_gerenciar_clientes() -> None:
                     put.titulo('ID não encontrado!')
                     input('Pressione ENTER para continuar...')
                     continue
+                idade = int(pnb.pega_data()[6:]) - cliente[0].ano_nasc
                 put.titulo_ml(
                     [
                         f'ID: {cliente[0].id}',
@@ -600,7 +601,7 @@ def view_menu_gerenciar_clientes() -> None:
                         f'CPF: {cliente[0].cpf}',
                         f'Telefone: {cliente[0].telefone}',
                         f'Sexo: {cliente[0].sexo}',
-                        f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                        f'Idade: {idade} anos'
                     ]
                 )
                 input('Pressione ENTER para continuar...')
@@ -613,6 +614,7 @@ def view_menu_gerenciar_clientes() -> None:
                     put.titulo('Nome não encontrado!')
                     input('Pressione ENTER para continuar...')
                     continue
+                idade = int(pnb.pega_data()[6:]) - cliente[0].ano_nasc
                 put.titulo_ml(
                     [
                         f'ID: {cliente[0].id}',
@@ -620,10 +622,11 @@ def view_menu_gerenciar_clientes() -> None:
                         f'CPF: {cliente[0].cpf}',
                         f'Telefone: {cliente[0].telefone}',
                         f'Sexo: {cliente[0].sexo}',
-                        f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                        f'Idade: {idade} anos'
                     ]
                 )
-                if input('Deseja consultar outro cliente? (S/N) ').upper() == 'S':
+                if input('Deseja consultar outro cliente? (S/N) ').upper(
+                ) == 'S':
                     continue
                 else:
                     break
@@ -636,6 +639,7 @@ def view_menu_gerenciar_clientes() -> None:
                     input('Pressione ENTER para continuar...')
                     continue
                 for cliente in clientes:
+                    idade = int(pnb.pega_data()[6:]) - cliente.ano_nasc
                     put.titulo_ml(
                         [
                             f'ID: {cliente.id}',
@@ -643,7 +647,7 @@ def view_menu_gerenciar_clientes() -> None:
                             f'CPF: {cliente.cpf}',
                             f'Telefone: {cliente.telefone}',
                             f'Sexo: {cliente.sexo}',
-                            f'Idade: {int(pnb.pega_data()[6:]) - cliente.ano_nasc} anos'
+                            f'Idade: {idade} anos'
                         ]
                     )
                 input('Pressione ENTER para continuar...')
@@ -658,6 +662,7 @@ def view_menu_gerenciar_clientes() -> None:
                 put.titulo('ID não encontrado!')
                 input('Pressione ENTER para continuar...')
                 continue
+            idade = int(pnb.pega_data()[6:]) - cliente[0].ano_nasc
             put.titulo_ml(
                 [
                     f'ID: {cliente[0].id}',
@@ -665,7 +670,7 @@ def view_menu_gerenciar_clientes() -> None:
                     f'Nome: {cliente[0].nome}',
                     f'Telefone: {cliente[0].telefone}',
                     f'Sexo: {cliente[0].sexo}',
-                    f'Idade: {int(pnb.pega_data()[6:]) - cliente[0].ano_nasc} anos'
+                    f'Idade: {idade} anos'
                 ]
             )
             put.cria_menu(
@@ -1001,6 +1006,7 @@ def view_menu_gerenciar_funcionarios():
                     put.titulo('ID não encontrado!')
                     input('Pressione ENTER para continuar...')
                     continue
+                idade = int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc
                 put.titulo_ml(
                     [
                         f'ID: {funcionario[0].id}',
@@ -1008,7 +1014,7 @@ def view_menu_gerenciar_funcionarios():
                         f'Nome: {funcionario[0].nome}',
                         f'Telefone: {funcionario[0].telefone}',
                         f'Sexo: {funcionario[0].sexo}',
-                        f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                        f'Idade: {idade} anos',
                         f'Cargo: {funcionario[0].cargo}'
                     ]
                 )
@@ -1022,6 +1028,7 @@ def view_menu_gerenciar_funcionarios():
                     put.titulo('Nome não encontrado!')
                     input('Pressione ENTER para continuar...')
                     continue
+                idade = int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc
                 put.titulo_ml(
                     [
                         f'ID: {funcionario[0].id}',
@@ -1029,7 +1036,7 @@ def view_menu_gerenciar_funcionarios():
                         f'Nome: {funcionario[0].nome}',
                         f'Telefone: {funcionario[0].telefone}',
                         f'Sexo: {funcionario[0].sexo}',
-                        f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                        f'Idade: {idade} anos',
                         f'Cargo: {funcionario[0].cargo}'
                     ]
                 )
@@ -1043,6 +1050,7 @@ def view_menu_gerenciar_funcionarios():
                     input('Pressione ENTER para continuar...')
                     continue
                 for funcionario in funcionarios:
+                    idade = int(pnb.pega_data()[6:]) - funcionario.ano_nasc
                     put.titulo_ml(
                         [
                             f'ID: {funcionario.id}',
@@ -1050,7 +1058,7 @@ def view_menu_gerenciar_funcionarios():
                             f'Nome: {funcionario.nome}',
                             f'Telefone: {funcionario.telefone}',
                             f'Sexo: {funcionario.sexo}',
-                            f'Idade: {int(pnb.pega_data()[6:]) - funcionario.ano_nasc} anos',
+                            f'Idade: {idade} anos',
                             f'Cargo: {funcionario.cargo}'
                         ]
                     )
@@ -1066,6 +1074,7 @@ def view_menu_gerenciar_funcionarios():
                 put.titulo('ID não encontrado!')
                 input('Pressione ENTER para continuar...')
                 continue
+            idade = int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc
             put.titulo_ml(
                 [
                     f'ID: {funcionario[0].id}',
@@ -1073,7 +1082,7 @@ def view_menu_gerenciar_funcionarios():
                     f'Nome: {funcionario[0].nome}',
                     f'Telefone: {funcionario[0].telefone}',
                     f'Sexo: {funcionario[0].sexo}',
-                    f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                    f'Idade: {idade} anos',
                     f'Cargo: {funcionario[0].cargo}'
                 ]
             )
@@ -1134,6 +1143,7 @@ def view_menu_gerenciar_funcionarios():
                 put.titulo('ID não encontrado!')
                 input('Pressione ENTER para continuar...')
                 continue
+            idade = int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc
             put.titulo_ml(
                 [
                     f'ID: {funcionario[0].id}',
@@ -1141,7 +1151,7 @@ def view_menu_gerenciar_funcionarios():
                     f'Nome: {funcionario[0].nome}',
                     f'Telefone: {funcionario[0].telefone}',
                     f'Sexo: {funcionario[0].sexo}',
-                    f'Idade: {int(pnb.pega_data()[6:]) - funcionario[0].ano_nasc} anos',
+                    f'Idade: {idade} anos',
                     f'Cargo: {funcionario[0].cargo}'
                 ]
             )

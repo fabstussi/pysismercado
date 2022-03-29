@@ -7,7 +7,9 @@ class FuncionariosDal:
     @classmethod
     def listar(cls) -> list:
         try:
-            with open('db/funcionarios.dbpy', 'r', encoding='utf-8') as arquivo:
+            with open(
+                'db/funcionarios.dbpy', 'r', encoding='utf-8'
+            ) as arquivo:
                 linhas = arquivo.readlines()
             linhas = list(map(lambda linha: linha.replace('\n', ''), linhas))
             linhas = list(map(lambda linha: linha.split('|'), linhas))
@@ -23,7 +25,9 @@ class FuncionariosDal:
     @classmethod
     def salvar(cls, funcionario: Funcionarios, modo: str) -> bool:
         try:
-            with open('db/funcionarios.dbpy', modo, encoding='utf-8') as arquivo:
+            with open(
+                'db/funcionarios.dbpy', modo, encoding='utf-8'
+            ) as arquivo:
                 arquivo.write(
                     f'{funcionario.id}|{funcionario.cpf}|{funcionario.nome}|' +
                     f'{funcionario.telefone}|{funcionario.sexo}|' +
@@ -36,7 +40,9 @@ class FuncionariosDal:
     @staticmethod
     def gera_id() -> int:
         try:
-            with open('db/funcionarios.dbpy', 'r', encoding='utf-8') as arquivo:
+            with open(
+                'db/funcionarios.dbpy', 'r', encoding='utf-8'
+            ) as arquivo:
                 linhas = arquivo.readlines()
             ultma_linha = [linhas.strip() for linhas in linhas][-1]
             if len(ultma_linha) == 0:

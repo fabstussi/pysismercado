@@ -1216,7 +1216,6 @@ def view_menu_gerenciar_produtos():
                 break
             nome = input('Nome: ').upper()
             quantidade = pnb.ler_inteiro('Quantidade: ')
-            custo = pnb.ler_real('Custo: R$ ')
             preco = pnb.ler_real('Preço: R$ ')
             descricao = input('Descrição: ').upper()
             resposta = PRODUTOS.cadastrar(
@@ -1224,7 +1223,6 @@ def view_menu_gerenciar_produtos():
                 fornecedor,
                 nome,
                 quantidade,
-                custo,
                 preco,
                 descricao
             )
@@ -1263,7 +1261,6 @@ def view_menu_gerenciar_produtos():
                         f'Fornecedor: {produto[0].fornecedor}',
                         f'Nome: {produto[0].nome}',
                         f'Quantidade: {produto[0].quantidade}',
-                        f'Custo: R$ {produto[0].custo}',
                         f'Preço: R$ {produto[0].preco}',
                         f'Descrição: {produto[0].descricao}'
                     ]
@@ -1285,7 +1282,6 @@ def view_menu_gerenciar_produtos():
                         f'Fornecedor: {produto[0].fornecedor}',
                         f'Nome: {produto[0].nome}',
                         f'Quantidade: {produto[0].quantidade}',
-                        f'Custo: R$ {produto[0].custo}',
                         f'Preço: R$ {produto[0].preco}',
                         f'Descrição: {produto[0].descricao}'
                     ]
@@ -1307,7 +1303,6 @@ def view_menu_gerenciar_produtos():
                             f'Fornecedor: {produto.fornecedor}',
                             f'Nome: {produto.nome}',
                             f'Quantidade: {produto.quantidade}',
-                            f'Custo: R$ {produto.custo}',
                             f'Preço: R$ {produto.preco}',
                             f'Descrição: {produto.descricao}'
                         ]
@@ -1329,7 +1324,6 @@ def view_menu_gerenciar_produtos():
                     f'Fornecedor: {produto[0].fornecedor}',
                     f'Nome: {produto[0].nome}',
                     f'Quantidade: {produto[0].quantidade}',
-                    f'Custo: R$ {produto[0].custo}',
                     f'Preço: R$ {produto[0].preco}',
                     f'Descrição: {produto[0].descricao}'
                 ]
@@ -1340,7 +1334,6 @@ def view_menu_gerenciar_produtos():
                     'Alterar fornecedor',
                     'Alterar nome',
                     'Alterar quantidade',
-                    'Alterar custo',
                     'Alterar preço',
                     'Alterar descrição',
                     'Voltar'
@@ -1382,17 +1375,19 @@ def view_menu_gerenciar_produtos():
             quantidade = pnb.ler_inteiro(
                 'Quantidade: '
             ) if opc == 4 else produto[0].quantidade
-            custo = pnb.ler_float(
-                'Custo: R$ '
-            ) if opc == 5 else produto[0].custo
             preco = pnb.ler_float(
                 'Preço: R$ '
-            ) if opc == 6 else produto[0].preco
+            ) if opc == 5 else produto[0].preco
             descricao = input('Descrição: ').upper(
-            ) if opc == 7 else produto[0].descricao
+            ) if opc == 6 else produto[0].descricao
             resposta = PRODUTOS.alterar(
-                id_produto, categoria, fornecedor, nome, quantidade,
-                custo, preco, descricao
+                id_produto,
+                categoria,
+                fornecedor,
+                nome,
+                quantidade,
+                preco,
+                descricao
             )
             put.titulo(resposta[1])
             if resposta[0] != 0:
@@ -1417,7 +1412,6 @@ def view_menu_gerenciar_produtos():
                     f'Fornecedor: {produto[0].fornecedor}',
                     f'Nome: {produto[0].nome}',
                     f'Quantidade: {produto[0].quantidade}',
-                    f'Custo: R$ {produto[0].custo}',
                     f'Preço: R$ {produto[0].preco}',
                     f'Descrição: {produto[0].descricao}'
                 ]
@@ -1443,6 +1437,10 @@ def view_menu_gerenciar_produtos():
             input('Pressione ENTER para continuar...')
         elif opcao == 6:
             break
+
+
+def view_menu_estoque() -> None:
+    pass
 
 
 def view_menu_operacional() -> None:

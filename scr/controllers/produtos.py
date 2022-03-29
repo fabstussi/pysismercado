@@ -54,7 +54,7 @@ class ProdutosController:
             return -2, 'Erro não foi possível realizar o cadastro'
 
     @classmethod
-    def alterar(cls, id_prod: int, nova_cat: str, novo_fornecedor: str,
+    def alterar(cls, id: int, nova_cat: str, novo_fornecedor: str,
                 novo_nome: str, nova_quantidade: int, novo_custo: float,
                 novo_preco: float, nova_descricao: str, visivel=1, tudo=False
                 ) -> tuple:
@@ -62,9 +62,9 @@ class ProdutosController:
                                         novo_preco, nova_descricao):
             return -1, 'Dados inválidos'
         produto = cls.buscar(nome=novo_nome, invisiveis=tudo)
-        if len(produto) > 0 and produto[0].id != id_prod:
+        if len(produto) > 0 and produto[0].id != id:
             return 1, f'{novo_nome} já cadastrado no ID: {produto[0].id}'
-        produto = cls.buscar(id=id_prod, invisiveis=tudo)
+        produto = cls.buscar(id=id, invisiveis=tudo)
         if len(produto) == 0:
             return -1, 'Produto não encontrado'
         produto[0].categoria = nova_cat
@@ -106,9 +106,17 @@ class ProdutosController:
         produto = cls.buscar(id=id)
         if len(produto) == 0:
             return -1, 'Produto não encontrado'
-        return cls.alterar(id, produto[0].nome, produto[0].quantidade,
-                           produto[0].custo, produto[0].preco,
-                           produto[0].descricao, visivel=0)
+        return cls.alterar(
+            id,
+            produto[0].categoria,
+            produto[0].fornecedor,
+            produto[0].nome,
+            produto[0].quantidade,
+            produto[0].custo,
+            produto[0].preco,
+            produto[0].descricao,
+            visivel=0
+        )
 
     @classmethod
     def recuperar_apagadas(cls) -> tuple:
@@ -129,6 +137,15 @@ class ProdutosController:
             else:
                 print('Opção inválida\n================')
         produto = cls.buscar(id=id, invisiveis=True)
-        return cls.alterar(id, produto[0].nome, produto[0].quantidade,
-                           produto[0].custo, produto[0].preco,
-                           produto[0].descricao, visivel=1, tudo=True)
+        return cls.alterar(
+            id,
+            produto[0].categoria,
+            produto[0].fornecedor,
+            produto[0].nome,
+            produto[0].quantidade,
+            produto[0].custo,
+            produto[0].preco,
+            produto[0].descricao,
+            visivel=1,
+            tudo=True
+        )

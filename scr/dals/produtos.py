@@ -26,8 +26,8 @@ class ProdutosDal:
             with open('db/produtos.dbpy', modo, encoding='utf-8') as arquivo:
                 arquivo.write(
                     f'{produto.id}|{produto.categoria}|{produto.fornecedor}' +
-                    f'|{produto.nome}|{produto.quantidade}|{produto.preco}|' +
-                    f'{produto.descricao}|{produto.visivel}\n')
+                    f'|{produto.nome}|{produto.quantidade}|{produto.preco}' +
+                    f'|{produto.descricao}|{produto.visivel}\n')
             return True
         except Exception:
             return False

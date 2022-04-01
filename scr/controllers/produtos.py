@@ -144,6 +144,9 @@ class ProdutosController:
                     ProdutosDal.salvar(prod, modo)
                 else:
                     ProdutosDal.salvar(produto[0], modo)
+                    print(
+                        f'Quantidade {produto[0].nome} alterada com sucesso!'
+                    )
 
     @classmethod
     def altera_preco(cls, id: int, novo_preco: float):
@@ -155,6 +158,9 @@ class ProdutosController:
                 ProdutosDal.salvar(prod, modo)
             else:
                 ProdutosDal.salvar(produto[0], modo)
+                print(
+                    f'Preço de {produto[0].nome} alterado com sucesso!'
+                )
 
     @classmethod
     def excluir(cls, id: int) -> tuple:

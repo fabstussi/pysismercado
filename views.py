@@ -52,10 +52,8 @@ MENU_GERENCIAMENTO = [
     'Retornar'
 ]
 MENU_ESTOQUE = [
-    'Entradas',
-    'Mudanças',
-    'Exclusões',
-    'Recuperar excluídos',
+    'Entradas de produtos',
+    'Mudanças de valores',
     'Retornar'
 ]
 MENU_RELATORIOS = [
@@ -186,9 +184,9 @@ def view_menu_administrativo() -> None:
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
             view_menu_gerenciamento()
-        elif opcao == 1:
-            pass
-        elif opcao == 1:
+        elif opcao == 2:
+            view_menu_estoque()
+        elif opcao == 3:
             pass
         elif opcao == 4:
             break
@@ -1261,7 +1259,7 @@ def view_menu_gerenciar_produtos():
                         f'Fornecedor: {produto[0].fornecedor}',
                         f'Nome: {produto[0].nome}',
                         f'Quantidade: {produto[0].quantidade}',
-                        f'Preço: R$ {produto[0].preco}',
+                        f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
                         f'Descrição: {produto[0].descricao}'
                     ]
                 )
@@ -1282,7 +1280,7 @@ def view_menu_gerenciar_produtos():
                         f'Fornecedor: {produto[0].fornecedor}',
                         f'Nome: {produto[0].nome}',
                         f'Quantidade: {produto[0].quantidade}',
-                        f'Preço: R$ {produto[0].preco}',
+                        f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
                         f'Descrição: {produto[0].descricao}'
                     ]
                 )
@@ -1303,7 +1301,7 @@ def view_menu_gerenciar_produtos():
                             f'Fornecedor: {produto.fornecedor}',
                             f'Nome: {produto.nome}',
                             f'Quantidade: {produto.quantidade}',
-                            f'Preço: R$ {produto.preco}',
+                            f'Preço: {pnb.mostra_BLR(produto.preco)}',
                             f'Descrição: {produto.descricao}'
                         ]
                     )
@@ -1324,7 +1322,7 @@ def view_menu_gerenciar_produtos():
                     f'Fornecedor: {produto[0].fornecedor}',
                     f'Nome: {produto[0].nome}',
                     f'Quantidade: {produto[0].quantidade}',
-                    f'Preço: R$ {produto[0].preco}',
+                    f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
                     f'Descrição: {produto[0].descricao}'
                 ]
             )
@@ -1375,7 +1373,7 @@ def view_menu_gerenciar_produtos():
             quantidade = pnb.ler_inteiro(
                 'Quantidade: '
             ) if opc == 4 else produto[0].quantidade
-            preco = pnb.ler_float(
+            preco = pnb.ler_real(
                 'Preço: R$ '
             ) if opc == 5 else produto[0].preco
             descricao = input('Descrição: ').upper(
@@ -1412,7 +1410,7 @@ def view_menu_gerenciar_produtos():
                     f'Fornecedor: {produto[0].fornecedor}',
                     f'Nome: {produto[0].nome}',
                     f'Quantidade: {produto[0].quantidade}',
-                    f'Preço: R$ {produto[0].preco}',
+                    f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
                     f'Descrição: {produto[0].descricao}'
                 ]
             )
@@ -1440,7 +1438,69 @@ def view_menu_gerenciar_produtos():
 
 
 def view_menu_estoque() -> None:
-    pass
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Estoque'
+        cabecalho()
+        put.cria_menu(MENU_ESTOQUE)
+        opcao = pnb.ler_inteiro('O que deseja fazer? ')
+        if opcao == 1:
+            lista_id = []
+            lista_quantidade = []
+            TITULO_PRINCIPAL[5] = 'Entrada de produto no estoque'
+            while True:
+                cabecalho()
+                id_produto = pnb.ler_inteiro('ID do produto: ')
+                produto = PRODUTOS.buscar(id=id_produto)
+                if len(produto) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {produto[0].id}',
+                        f'Categoria: {produto[0].categoria}',
+                        f'Fornecedor: {produto[0].fornecedor}',
+                        f'Nome: {produto[0].nome}',
+                        f'Quantidade: {produto[0].quantidade}',
+                        f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
+                        f'Descrição: {produto[0].descricao}'
+                    ]
+                )
+                quantidade = pnb.ler_inteiro('Quantidade a ser adicionada: ')
+                lista_id.append(id_produto)
+                lista_quantidade.append(quantidade)
+                if input('Deseja adicionar mais algum produto? [S/N]: ').upper(
+                ) == 'S':
+                    continue
+                else:
+                    PRODUTOS.altera_estoque(lista_id, lista_quantidade)
+                    break
+        elif opcao == 2:
+            while True:
+                TITULO_PRINCIPAL[5] = 'Alterar o preco de um produto'
+                cabecalho()
+                id_produto = pnb.ler_inteiro('ID do produto: ')
+                produto = PRODUTOS.buscar(id=id_produto)
+                if len(produto) == 0:
+                    put.titulo('ID não encontrado!')
+                    input('Pressione ENTER para continuar...')
+                    continue
+                put.titulo_ml(
+                    [
+                        f'ID: {produto[0].id}',
+                        f'Categoria: {produto[0].categoria}',
+                        f'Fornecedor: {produto[0].fornecedor}',
+                        f'Nome: {produto[0].nome}',
+                        f'Quantidade: {produto[0].quantidade}',
+                        f'Preço: {pnb.mostra_BLR(produto[0].preco)}',
+                        f'Descrição: {produto[0].descricao}'
+                    ]
+                )
+                preco = pnb.ler_real('Novo preço: R$ ')
+                PRODUTOS.altera_preco(id_produto, preco)
+                break
+        elif opcao == 3:
+            break
 
 
 def view_menu_operacional() -> None:

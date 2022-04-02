@@ -2,6 +2,7 @@ from models.vendas import Vendas
 from dals.vendas import VendasDal
 from datetime import datetime
 import util.PyNumBR as pnb
+import util.PyUtilTerminal as put
 
 
 class VendasController:
@@ -58,13 +59,51 @@ class VendasController:
         return listas
 
     @classmethod
-    def cadastrar(cls, funcionario: str, cliente: str, compra: list,
-                  valor: float, data=pnb.pega_data(), visivel=1) -> str:
+    def cadastrar(
+            cls,
+            funcionario: str,
+            cliente: str,
+            compra: list,
+            valor: float,
+            data=pnb.pega_data(),
+            visivel=1) -> tuple:
         vendas = VendasDal()
         n_cupom = vendas.gera_cupom()
         venda = Vendas(n_cupom, funcionario, data, cliente, compra,
                        valor, visivel)
         if vendas.salvar(venda, 'a'):
-            return 'Venda cadastrada com sucesso'
+            return n_cupom, 'Venda cadastrada com sucesso'
         else:
-            return 'Erro não foi possível realizar o cadastro'
+            return -1, 'Erro não foi possível realizar o cadastro'
+
+    @classmethod
+    def cria_cupom(cls, cupom, telefone) -> tuple:
+        vendas = cls.buscar(cupom=cupom)
+        id_itens = []
+        quantidade_itens = []
+        for venda in vendas:
+            cupom = [
+                f'Cupom: {venda.cupom} {" " * 75} Data: {venda.data}',
+                f'Funcionário: {venda.funcionario}',
+                f'Cliente: {venda.cliente} - Telefone: {telefone}',
+                '',
+            ]
+            lista = venda.compra.replace("['", '').replace("']", '')
+            lista = lista.split("', '")
+            cupom.append(
+                f'{"ID":<5}{"Produto":<50}{"Quantidade":<12}{"Preço":<15}' +
+                f'{"Subtotal":<15}'
+            )
+            for linha in lista:
+                linha = linha.split(';')
+                linha.pop()
+                itens = list(map(lambda x: x.split(':')[1], linha))
+                id_itens.append(int(itens[0]))
+                quantidade_itens.append(int(itens[2]) * (-1))
+                cupom.append(
+                    f'{itens[0]:<5}{itens[1]:<50}{itens[2]:<12}{itens[3]:<15}'
+                    + f'{itens[4]:<15}'
+                )
+            cupom.append('')
+            cupom.append(f'Total: {pnb.mostra_BLR(venda.valor):}')
+        return cupom, id_itens, quantidade_itens

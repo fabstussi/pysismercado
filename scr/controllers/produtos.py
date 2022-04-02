@@ -134,7 +134,8 @@ class ProdutosController:
         return retorno
 
     @classmethod
-    def altera_estoque(cls, id: list, modificador: list):
+    def altera_estoque(cls, id: list, modificador: list) -> list:
+        resposta = []
         for i_id, item_id in enumerate(id):
             produto = cls.buscar(id=item_id)
             produto[0].quantidade += modificador[i_id]
@@ -144,9 +145,10 @@ class ProdutosController:
                     ProdutosDal.salvar(prod, modo)
                 else:
                     ProdutosDal.salvar(produto[0], modo)
-                    print(
+                    resposta.append(
                         f'Quantidade {produto[0].nome} alterada com sucesso!'
                     )
+        return resposta
 
     @classmethod
     def altera_preco(cls, id: int, novo_preco: float):

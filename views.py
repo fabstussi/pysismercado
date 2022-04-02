@@ -1473,7 +1473,10 @@ def view_menu_estoque() -> None:
                 ) == 'S':
                     continue
                 else:
-                    PRODUTOS.altera_estoque(lista_id, lista_quantidade)
+                    put.titulo_ml(
+                        PRODUTOS.altera_estoque(lista_id, lista_quantidade)
+                    )
+                    input('Pressione ENTER para continuar...')
                     break
         elif opcao == 2:
             while True:
@@ -1503,6 +1506,95 @@ def view_menu_estoque() -> None:
             break
 
 
+def view_menu_vendas() -> None:
+    TITULO_PRINCIPAL[5] = 'MENU: VENDAS'
+    while True:
+        cabecalho()
+        cliente = input('Nome do cliente: ').upper()
+        if CLIENTES.buscar(nome=cliente) == []:
+            put.titulo('Cliente não encontrado!')
+            input('Pressione ENTER para continuar...')
+            continue
+        compras = []
+        total_compra = 0
+        while True:
+            id_produto = pnb.ler_inteiro('ID do produto:')
+            if PRODUTOS.buscar(id=id_produto) == []:
+                put.titulo('ID não encontrado!')
+                input('Pressione ENTER para continuar...')
+                continue
+            quantidade = pnb.ler_inteiro('Quantidade: ')
+            produto = PRODUTOS.buscar(id=id_produto)[0]
+            if produto.quantidade < quantidade:
+                put.titulo('Quantidade indisponível!')
+                input('Pressione ENTER para continuar...')
+                continue
+            sub_total = quantidade * produto.preco
+            total_compra += sub_total
+            compra = f'ID:{produto.id};'
+            compra += f'Produto:{produto.nome};'
+            compra += f'Quantidade:{quantidade};'
+            compra += f'Preço:{pnb.mostra_BLR(produto.preco)};'
+            compra += f'Subtotal:{pnb.mostra_BLR(sub_total)};'
+            compras.append(compra)
+            if input('Adicionar mais algum produto? [S/N]: ')[0].upper(
+            ) == 'S':
+                continue
+            break
+        resposta = VENDAS.cadastrar(
+            funcionario_atual.nome,
+            cliente,
+            compras,
+            total_compra
+        )
+        if resposta[0] == -1:
+            put.titulo('Erro ao cadastrar a venda!')
+            input('Pressione ENTER para continuar...')
+            continue
+        saida = VENDAS.cria_cupom(
+            resposta[0],
+            CLIENTES.buscar(nome=cliente)[0].telefone
+        )
+        PRODUTOS.altera_estoque(saida[1], saida[2])
+        put.titulo_ml(saida[0])
+        input('Pressione ENTER para continuar...')
+        break
+
+
+def view_menu_consultas() -> None:
+    vendas = VENDAS.buscar()
+    for venda in vendas:
+        cupom = [
+            f'Cupom: {venda.cupom} {" " * 75} Data: {venda.data}',
+            f'Funcionário: {venda.funcionario}',
+            f'Cliente: {venda.cliente} - Telefone: ' +
+            f'{CLIENTES.buscar(nome=venda.cliente)[0].telefone}',
+            '',
+        ]
+        lista = venda.compra.replace("['", '').replace("']", '')
+        lista = lista.split("', '")
+        cupom.append(
+            f'{"ID":<5}{"Produto":<50}{"Quantidade":<12}{"Preço":<15}' +
+            f'{"Subtotal":<15}'
+        )
+        for linha in lista:
+            linha = linha.split(';')
+            linha.pop()
+            itens = list(map(lambda x: x.split(':')[1], linha))
+            cupom.append(
+                f'{itens[0]:<5}{itens[1]:<50}{itens[2]:<12}{itens[3]:<15}' +
+                f'{itens[4]:<15}'
+            )
+        cupom.append('')
+        cupom.append(f'Total: {pnb.mostra_BLR(venda.valor):}')
+        put.titulo_ml(cupom)
+        # for i, itens in enumerate(linha):
+        #     itens = itens.split(':')
+        #     print(itens[1], end=' | ')
+        #     if i > 0 and i % 4 == 0:
+        #         print()
+
+
 def view_menu_operacional() -> None:
     while True:
         TITULO_PRINCIPAL[5] = 'MENU: Principal -> Operacional'
@@ -1510,9 +1602,10 @@ def view_menu_operacional() -> None:
         put.cria_menu(MENU_OPERACIONAL)
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
-            pass
+            view_menu_vendas()
         elif opcao == 2:
-            pass
+            view_menu_consultas()
+            input('Pressione ENTER para continuar...')
         elif opcao == 3:
             break
         else:
@@ -1525,7 +1618,6 @@ if not criar_usuario_inicial():
     exit(1)
 
 funcionario_atual = login()
-
 
 while True:
     TITULO_PRINCIPAL[4] = f'Usurário: {funcionario_atual.nome}'

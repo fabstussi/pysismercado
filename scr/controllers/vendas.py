@@ -2,7 +2,6 @@ from models.vendas import Vendas
 from dals.vendas import VendasDal
 from datetime import datetime
 import util.PyNumBR as pnb
-import util.PyUtilTerminal as put
 
 
 class VendasController:

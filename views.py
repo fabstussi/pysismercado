@@ -187,7 +187,7 @@ def view_menu_administrativo() -> None:
         elif opcao == 2:
             view_menu_estoque()
         elif opcao == 3:
-            pass
+            view_menu_relatorios()
         elif opcao == 4:
             break
 
@@ -1506,7 +1506,58 @@ def view_menu_estoque() -> None:
             break
 
 
-def view_menu_vendas() -> None:
+def view_menu_relatorios() -> None:
+    TITULO_PRINCIPAL[5] = 'MENU: Principal -> Administrativo -> Relatórios'
+    while True:
+        cabecalho()
+        put.cria_menu(
+            [
+                'Relatório de vendas em uma data',
+                'Relatório de vendas em um intervalo de datas',
+                'Relatórios de produtos mais vendidos',
+                'Relatórios de clientes e compras',
+                'Retornar',
+            ]
+        )
+        opcao = pnb.ler_inteiro('O que deseja fazer? ')
+        if opcao == 1:
+            TITULO_PRINCIPAL[5] = 'Vendas em uma data'
+            cabecalho()
+            data = input('Data da compra (dd/mm/aaaa): ')
+            vendas = VENDAS.buscar(data_i=data)
+            for venda in vendas:
+                telefone = CLIENTES.buscar(nome=venda.cliente)[0].telefone
+                resposta = (VENDAS.cria_cupom(venda.cupom, telefone))
+                put.titulo_ml(resposta[0])
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            TITULO_PRINCIPAL[5] = 'Vendas em um intervalo de datas'
+            cabecalho()
+            data_inicial = input('Data inicial (dd/mm/aaaa): ')
+            data_final = input('Data final (dd/mm/aaaa): ')
+            vendas = VENDAS.buscar(data_i=data_inicial, data_f=data_final)
+            for venda in vendas:
+                telefone = CLIENTES.buscar(nome=venda.cliente)[0].telefone
+                resposta = (VENDAS.cria_cupom(venda.cupom, telefone))
+                put.titulo_ml(resposta[0])
+            input('Pressione ENTER para continuar...')
+        elif opcao == 3:
+            TITULO_PRINCIPAL[5] = 'Produtos mais vendidos'
+            cabecalho()
+            resposta = VENDAS.gerar_relatorio(2, 'produto')
+            print(resposta)
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            TITULO_PRINCIPAL[5] = 'Clientes e compras'
+            cabecalho()
+            resposta = VENDAS.gerar_relatorio(0, 'cliente')
+            print(resposta)
+            input('Pressione ENTER para continuar...')
+        elif opcao == 5:
+            break
+
+
+def view_menu_op_vendas() -> None:
     TITULO_PRINCIPAL[5] = 'MENU: VENDAS'
     while True:
         cabecalho()
@@ -1518,23 +1569,26 @@ def view_menu_vendas() -> None:
         compras = []
         total_compra = 0
         while True:
-            id_produto = pnb.ler_inteiro('ID do produto:')
-            if PRODUTOS.buscar(id=id_produto) == []:
+            id_produto = pnb.ler_inteiro('ID do produto: ')
+            produto = PRODUTOS.buscar(id=id_produto)
+            if len(produto) == 0:
                 put.titulo('ID não encontrado!')
                 input('Pressione ENTER para continuar...')
                 continue
+            put.titulo(
+                f'{produto[0].nome} - {pnb.mostra_BLR(produto[0].preco)}'
+            )
             quantidade = pnb.ler_inteiro('Quantidade: ')
-            produto = PRODUTOS.buscar(id=id_produto)[0]
-            if produto.quantidade < quantidade:
+            if produto[0].quantidade < quantidade:
                 put.titulo('Quantidade indisponível!')
                 input('Pressione ENTER para continuar...')
                 continue
-            sub_total = quantidade * produto.preco
+            sub_total = quantidade * produto[0].preco
             total_compra += sub_total
-            compra = f'ID:{produto.id};'
-            compra += f'Produto:{produto.nome};'
+            compra = f'ID:{produto[0].id};'
+            compra += f'Produto:{produto[0].nome};'
             compra += f'Quantidade:{quantidade};'
-            compra += f'Preço:{pnb.mostra_BLR(produto.preco)};'
+            compra += f'Preço:{pnb.mostra_BLR(produto[0].preco)};'
             compra += f'Subtotal:{pnb.mostra_BLR(sub_total)};'
             compras.append(compra)
             if input('Adicionar mais algum produto? [S/N]: ')[0].upper(
@@ -1558,41 +1612,60 @@ def view_menu_vendas() -> None:
         PRODUTOS.altera_estoque(saida[1], saida[2])
         put.titulo_ml(saida[0])
         input('Pressione ENTER para continuar...')
+        if input('Deseja cadastrar outra venda? [S/N]: ')[0].upper() == 'S':
+            continue
         break
 
 
-def view_menu_consultas() -> None:
-    vendas = VENDAS.buscar()
-    for venda in vendas:
-        cupom = [
-            f'Cupom: {venda.cupom} {" " * 75} Data: {venda.data}',
-            f'Funcionário: {venda.funcionario}',
-            f'Cliente: {venda.cliente} - Telefone: ' +
-            f'{CLIENTES.buscar(nome=venda.cliente)[0].telefone}',
-            '',
-        ]
-        lista = venda.compra.replace("['", '').replace("']", '')
-        lista = lista.split("', '")
-        cupom.append(
-            f'{"ID":<5}{"Produto":<50}{"Quantidade":<12}{"Preço":<15}' +
-            f'{"Subtotal":<15}'
+def view_menu_op_consultas() -> None:
+    while True:
+        TITULO_PRINCIPAL[5] = 'MENU: Principal -> Operacional -> Consultas'
+        cabecalho()
+        put.titulo_ml(
+            [
+                '1 - Consultar vendas do dia',
+                '2 - Consultar Clientes cadastrados',
+                '3 - Consultar produtos com estoque baixo',
+                '4 - Retornar'
+            ]
         )
-        for linha in lista:
-            linha = linha.split(';')
-            linha.pop()
-            itens = list(map(lambda x: x.split(':')[1], linha))
-            cupom.append(
-                f'{itens[0]:<5}{itens[1]:<50}{itens[2]:<12}{itens[3]:<15}' +
-                f'{itens[4]:<15}'
-            )
-        cupom.append('')
-        cupom.append(f'Total: {pnb.mostra_BLR(venda.valor):}')
-        put.titulo_ml(cupom)
-        # for i, itens in enumerate(linha):
-        #     itens = itens.split(':')
-        #     print(itens[1], end=' | ')
-        #     if i > 0 and i % 4 == 0:
-        #         print()
+        opcao = pnb.ler_inteiro('O que deseja fazer? ')
+        if opcao == 1:
+            total_vendido = 0
+            vendas_dia = (VENDAS.buscar(data_i=pnb.pega_data()))
+            if len(vendas_dia) == 0:
+                put.titulo('Nenhuma venda do dia!')
+                input('Pressione ENTER para continuar...')
+                continue
+            for venda in vendas_dia:
+                telefone = CLIENTES.buscar(nome=venda.cliente)[0].telefone
+                cupom = VENDAS.cria_cupom(venda.cupom, telefone)
+                put.titulo_ml(cupom[0])
+                total_vendido += venda.valor
+            put.titulo('Total vendido: R$ ' + pnb.mostra_BLR(total_vendido))
+            input('Pressione ENTER para continuar...')
+        elif opcao == 2:
+            clientes = CLIENTES.buscar()
+            for cliente in clientes:
+                put.titulo(
+                    f'ID: {cliente.id} - Nome: {cliente.nome}'
+                )
+            input('Pressione ENTER para continuar...')
+        elif opcao == 3:
+            produtos = PRODUTOS.buscar()
+            produtos = list(filter(lambda x: x.quantidade < 10, produtos))
+            if len(produtos) == 0:
+                put.titulo('Nenhum produto com estoque baixo!')
+                input('Pressione ENTER para continuar...')
+                continue
+            for produto in produtos:
+                put.titulo(
+                    f'ID: {produto.id} - Nome: {produto.nome} - Quantidade:' +
+                    f' {produto.quantidade}'
+                )
+            input('Pressione ENTER para continuar...')
+        elif opcao == 4:
+            break
 
 
 def view_menu_operacional() -> None:
@@ -1602,10 +1675,9 @@ def view_menu_operacional() -> None:
         put.cria_menu(MENU_OPERACIONAL)
         opcao = pnb.ler_inteiro('Escolha uma opção: ')
         if opcao == 1:
-            view_menu_vendas()
+            view_menu_op_vendas()
         elif opcao == 2:
-            view_menu_consultas()
-            input('Pressione ENTER para continuar...')
+            view_menu_op_consultas()
         elif opcao == 3:
             break
         else:

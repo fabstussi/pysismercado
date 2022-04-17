@@ -82,73 +82,70 @@ class VendasController:
         return cupom, id_itens, quantidade_itens
 
     @classmethod
-    def gerar_relatorio(
-        cls,
-        quantidade: int,
-        parametro: str,
-    ) -> list:
-        listar = []
-        if parametro == 'cliente':
-            arruma_cliente = []
-            vendas = cls.buscar()
-            for venda in vendas:
-                compras_clientes = {'Cliente': venda.cliente, 'Compras': []}
-                lista = venda.compra.replace("['", '').replace("']", '')
-                lista = lista.split("', '")
-                for linha in lista:
-                    compras = []
-                    linha = linha.split(';')
-                    linha.pop()
-                    itens = list(map(lambda x: x.split(':')[1], linha))
-                    produto = itens[1]
-                    quantidades = int(itens[2])
-                    compras.append(produto)
-                    compras.append(quantidades)
-                    compras_clientes['Compras'].append(compras)
-                arruma_cliente.append(compras_clientes)
-            conta_cliente = []
-            lista_compras = []
-            itens_compra = []
-            for cliente in arruma_cliente:
-                for v in cliente['Cliente']:
-                    if v not in conta_cliente:
-                        conta_cliente.append(v)
-                        conta_cliente.append(1)
-                    else:
-                        conta_cliente[conta_cliente.index(v) + 1] += 1
-                # for k, v in cliente.items():
-                #     if k == 'Cliente':
-                #         if v not in conta_cliente:
-                #             conta_cliente.append(v)
-                #             conta_cliente.append(1)
-                #         else:
-                #             conta_cliente[conta_cliente.index(v) + 1] += 1
-            print(conta_cliente)
-        elif parametro == 'produto':
-            vendas = cls.buscar()
-            for venda in vendas:
-                produtos_quantidade = {}
-                lista = venda.compra.replace("['", '').replace("']", '')
-                lista = lista.split("', '")
-                for linha in lista:
-                    linha = linha.split(';')
-                    linha.pop()
-                    itens = list(map(lambda x: x.split(':')[1], linha))
-                    produto = itens[1]
-                    quantidades = int(itens[2])
-                    produtos_quantidade[produto] = quantidades
-                listar.append(produtos_quantidade)
-            soma_produtos = []
-            for item in listar:
-                for key, value in item.items():
-                    if key not in soma_produtos:
-                        soma_produtos.append(key)
-                        soma_produtos.append(value)
-                    else:
-                        soma_produtos[soma_produtos.index(key) + 1] += value
-            for i in range(0, len(soma_produtos), 2):
-                listar.append(
-                    f'Produto: {soma_produtos[i]} - Quantidade: ' +
-                    f'{soma_produtos[i + 1]}'
-                )
+    def gerar_relatorio_clientes(cls) -> list:
+        relatorio = []
+        lista_clientes = []
+        lista_compras = []
+        vendas = cls.buscar()
+        for venda in vendas:
+            if venda.cliente not in lista_clientes:
+                lista_clientes.append(venda.cliente)
+                lista_clientes.append(1)
+            else:
+                lista_clientes[lista_clientes.index(venda.cliente) + 1] += 1
+            lista = venda.compra.replace("['", '').replace("']", '')
+            lista = lista.split("', '")
+            for linha in lista:
+                compras = []
+                linha = linha.split(';')
+                linha.pop()
+                itens = list(map(lambda x: x.split(':')[1], linha))
+                produto = itens[1]
+                quantidades = int(itens[2])
+                compras.append(venda.cliente)
+                compras.append(produto)
+                compras.append(quantidades)
+                lista_compras.append(compras)
+        for i in range(0, len(lista_clientes), 2):
+            aux = []
+            aux.append(
+                f'Cliente: {lista_clientes[i]} realizou ' +
+                f'{lista_clientes[i+1]} compras'
+            )
+            for item in lista_compras:
+                if item[0] == lista_clientes[i]:
+                    aux.append(
+                        f'Produto: {item[1]} - Quantidade: {item[2]}'
+                    )
+            relatorio.append(aux)
+        return relatorio
+
+    @classmethod
+    def gerar_relatorio_produtos(cls, quantidade: int) -> list:
+        vendas = cls.buscar()
+        for venda in vendas:
+            produtos_quantidade = {}
+            lista = venda.compra.replace("['", '').replace("']", '')
+            lista = lista.split("', '")
+            for linha in lista:
+                linha = linha.split(';')
+                linha.pop()
+                itens = list(map(lambda x: x.split(':')[1], linha))
+                produto = itens[1]
+                quantidades = int(itens[2])
+                produtos_quantidade[produto] = quantidades
+            listar.append(produtos_quantidade)
+        soma_produtos = []
+        for item in listar:
+            for key, value in item.items():
+                if key not in soma_produtos:
+                    soma_produtos.append(key)
+                    soma_produtos.append(value)
+                else:
+                    soma_produtos[soma_produtos.index(key) + 1] += value
+        for i in range(0, len(soma_produtos), 2):
+            listar.append(
+                f'Produto: {soma_produtos[i]} - Quantidade: ' +
+                f'{soma_produtos[i + 1]}'
+            )
         return listar

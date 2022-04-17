@@ -1550,8 +1550,9 @@ def view_menu_relatorios() -> None:
         elif opcao == 4:
             TITULO_PRINCIPAL[5] = 'Clientes e compras'
             cabecalho()
-            resposta = VENDAS.gerar_relatorio(0, 'cliente')
-            print(resposta)
+            resposta = VENDAS.gerar_relatorio_clientes()
+            for cliente in resposta:
+                put.titulo_ml(cliente)
             input('Pressione ENTER para continuar...')
         elif opcao == 5:
             break

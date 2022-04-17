@@ -160,4 +160,4 @@ class VendasController:
                 f'Produto: {produtos_quantidade[i]} - Quantidade: ' +
                 f'{produtos_quantidade[i+1]}'
             )
-        return relatorio
+        return relatorio[:quantidade]

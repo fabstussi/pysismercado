@@ -1,3 +1,4 @@
+from itertools import count
 from models.vendas import Vendas
 from dals.vendas import VendasDal
 from datetime import datetime
@@ -22,39 +23,12 @@ class VendasController:
             listas = []
             for venda in vendas.listar():
                 venda_data = datetime.strptime(venda.data, '%d/%m/%Y')
-                if data_i < venda_data < data_f:
+                if data_i <= venda_data <= data_f:
                     listas.append(venda)
         else:
             listas = vendas.listar()
         if not invisiveis:
             listas = list(filter(lambda x: x.visivel == 1, listas))
-        return listas
-
-    @staticmethod
-    def listar_compras(compra: str) -> list:
-        listas = compra[1:-1].replace("'", '').split(', ')
-        listas = list(map(lambda c: c.split(';'), listas))
-        return listas
-
-    @staticmethod
-    def quantidade_produtos_vendidos(cupom=None, data_i=None, data_f=None
-                                     ) -> list:
-        itens = []
-        listas = []
-        vendas = VendasController()
-        for venda in vendas.buscar(cupom=cupom, data_i=data_i, data_f=data_f):
-            lista_compras = venda.compra[1:-1].replace("'", "").split(', ')
-            lista_compras = list(
-                map(lambda compra: compra.split(';'), lista_compras))
-            for item_comprado in lista_compras:
-                if item_comprado[0] not in itens:
-                    itens.append(item_comprado[0])
-                    listas.append(item_comprado[0])
-                    listas.append(int(item_comprado[1]))
-                else:
-                    i = listas.index(item_comprado[0])
-                    listas[i + 1] += int(item_comprado[1])
-
         return listas
 
     @classmethod
@@ -106,3 +80,75 @@ class VendasController:
             cupom.append('')
             cupom.append(f'Total: {pnb.mostra_BLR(venda.valor):}')
         return cupom, id_itens, quantidade_itens
+
+    @classmethod
+    def gerar_relatorio(
+        cls,
+        quantidade: int,
+        parametro: str,
+    ) -> list:
+        listar = []
+        if parametro == 'cliente':
+            arruma_cliente = []
+            vendas = cls.buscar()
+            for venda in vendas:
+                compras_clientes = {'Cliente': venda.cliente, 'Compras': []}
+                lista = venda.compra.replace("['", '').replace("']", '')
+                lista = lista.split("', '")
+                for linha in lista:
+                    compras = []
+                    linha = linha.split(';')
+                    linha.pop()
+                    itens = list(map(lambda x: x.split(':')[1], linha))
+                    produto = itens[1]
+                    quantidades = int(itens[2])
+                    compras.append(produto)
+                    compras.append(quantidades)
+                    compras_clientes['Compras'].append(compras)
+                arruma_cliente.append(compras_clientes)
+            conta_cliente = []
+            lista_compras = []
+            itens_compra = []
+            for cliente in arruma_cliente:
+                for v in cliente['Cliente']:
+                    if v not in conta_cliente:
+                        conta_cliente.append(v)
+                        conta_cliente.append(1)
+                    else:
+                        conta_cliente[conta_cliente.index(v) + 1] += 1
+                # for k, v in cliente.items():
+                #     if k == 'Cliente':
+                #         if v not in conta_cliente:
+                #             conta_cliente.append(v)
+                #             conta_cliente.append(1)
+                #         else:
+                #             conta_cliente[conta_cliente.index(v) + 1] += 1
+            print(conta_cliente)
+        elif parametro == 'produto':
+            vendas = cls.buscar()
+            for venda in vendas:
+                produtos_quantidade = {}
+                lista = venda.compra.replace("['", '').replace("']", '')
+                lista = lista.split("', '")
+                for linha in lista:
+                    linha = linha.split(';')
+                    linha.pop()
+                    itens = list(map(lambda x: x.split(':')[1], linha))
+                    produto = itens[1]
+                    quantidades = int(itens[2])
+                    produtos_quantidade[produto] = quantidades
+                listar.append(produtos_quantidade)
+            soma_produtos = []
+            for item in listar:
+                for key, value in item.items():
+                    if key not in soma_produtos:
+                        soma_produtos.append(key)
+                        soma_produtos.append(value)
+                    else:
+                        soma_produtos[soma_produtos.index(key) + 1] += value
+            for i in range(0, len(soma_produtos), 2):
+                listar.append(
+                    f'Produto: {soma_produtos[i]} - Quantidade: ' +
+                    f'{soma_produtos[i + 1]}'
+                )
+        return listar

@@ -122,9 +122,11 @@ class VendasController:
 
     @classmethod
     def gerar_relatorio_produtos(cls, quantidade: int) -> list:
+        relatorio = []
+        soma_produtos = []
+        produtos_quantidade = []
         vendas = cls.buscar()
         for venda in vendas:
-            produtos_quantidade = {}
             lista = venda.compra.replace("['", '').replace("']", '')
             lista = lista.split("', '")
             for linha in lista:
@@ -133,19 +135,29 @@ class VendasController:
                 itens = list(map(lambda x: x.split(':')[1], linha))
                 produto = itens[1]
                 quantidades = int(itens[2])
-                produtos_quantidade[produto] = quantidades
-            listar.append(produtos_quantidade)
-        soma_produtos = []
-        for item in listar:
-            for key, value in item.items():
-                if key not in soma_produtos:
-                    soma_produtos.append(key)
-                    soma_produtos.append(value)
+                if produto not in soma_produtos:
+                    soma_produtos.append(produto)
+                    soma_produtos.append(quantidades)
                 else:
-                    soma_produtos[soma_produtos.index(key) + 1] += value
-        for i in range(0, len(soma_produtos), 2):
-            listar.append(
-                f'Produto: {soma_produtos[i]} - Quantidade: ' +
-                f'{soma_produtos[i + 1]}'
+                    soma_produtos[
+                        soma_produtos.index(produto) + 1] += quantidades
+        for i in range(1, len(soma_produtos), 2):
+            if len(produtos_quantidade) > 0:
+                for j in range(1, len(produtos_quantidade), 2):
+                    if soma_produtos[i] > produtos_quantidade[j]:
+                        produtos_quantidade.insert(j-1, soma_produtos[i-1])
+                        produtos_quantidade.insert(j, soma_produtos[i])
+                        break
+                    elif j == len(produtos_quantidade) - 1:
+                        produtos_quantidade.append(soma_produtos[i-1])
+                        produtos_quantidade.append(soma_produtos[i])
+                        break
+            else:
+                produtos_quantidade.append(soma_produtos[i-1])
+                produtos_quantidade.append(soma_produtos[i])
+        for i in range(0, len(produtos_quantidade), 2):
+            relatorio.append(
+                f'Produto: {produtos_quantidade[i]} - Quantidade: ' +
+                f'{produtos_quantidade[i+1]}'
             )
-        return listar
+        return relatorio

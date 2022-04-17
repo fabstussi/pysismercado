@@ -1544,14 +1544,14 @@ def view_menu_relatorios() -> None:
         elif opcao == 3:
             TITULO_PRINCIPAL[5] = 'Produtos mais vendidos'
             cabecalho()
-            resposta = VENDAS.gerar_relatorio(2, 'produto')
-            print(resposta)
+            resposta = pnb.ler_inteiro('Quantos produtos deseja ver: ')
+            put.titulo_ml(VENDAS.gerar_relatorio_produtos(resposta))
             input('Pressione ENTER para continuar...')
         elif opcao == 4:
             TITULO_PRINCIPAL[5] = 'Clientes e compras'
             cabecalho()
-            resposta = VENDAS.gerar_relatorio_clientes()
-            for cliente in resposta:
+            # resposta = VENDAS.gerar_relatorio_clientes()
+            for cliente in VENDAS.gerar_relatorio_clientes():  # resposta:
                 put.titulo_ml(cliente)
             input('Pressione ENTER para continuar...')
         elif opcao == 5:

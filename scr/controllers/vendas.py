@@ -1,4 +1,3 @@
-from itertools import count
 from models.vendas import Vendas
 from dals.vendas import VendasDal
 from datetime import datetime
@@ -124,7 +123,7 @@ class VendasController:
     def gerar_relatorio_produtos(cls, quantidade: int) -> list:
         relatorio = []
         soma_produtos = []
-        produtos_quantidade = []
+        produtos_quantidade: list[str] = []
         vendas = cls.buscar()
         for venda in vendas:
             lista = venda.compra.replace("['", '').replace("']", '')
